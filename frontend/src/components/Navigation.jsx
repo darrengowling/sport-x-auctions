@@ -16,29 +16,36 @@ const Navigation = () => {
 
   return (
     <div className="sticky top-0 bg-white border-b border-gray-200 z-50 shadow-sm">
-      {/* Sport X Brand Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4">
+      {/* Enhanced Sport X Brand Header */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-4 px-4 shadow-lg">
         <div className="flex items-center justify-between">
           <button 
             onClick={() => navigate('/splash')}
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-3 hover:scale-105 transition-all duration-200 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2"
           >
-            <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-sm">SX</span>
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-blue-600 font-bold text-lg">SX</span>
             </div>
             <div className="flex flex-col items-start">
-              <span className="font-bold text-sm">Sport X</span>
-              <span className="text-xs text-blue-200 leading-none">Sports gaming with friends</span>
+              <span className="font-bold text-lg tracking-wide">Sport X</span>
+              <span className="text-xs text-blue-200 leading-none font-medium">Pro Cricket Auctions</span>
             </div>
           </button>
           
           <button 
             onClick={() => navigate('/splash')}
-            className="flex items-center space-x-1 bg-white/20 px-3 py-1 rounded-full hover:bg-white/30 transition-colors"
+            className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all duration-200 shadow-md"
           >
-            <Info size={14} />
-            <span className="text-xs font-medium">About</span>
+            <Info size={16} />
+            <span className="text-sm font-semibold">About Sport X</span>
           </button>
+        </div>
+        
+        {/* Tagline */}
+        <div className="mt-2 text-center">
+          <p className="text-xs text-blue-100 font-medium">
+            Sports gaming with friends • No gambling. All game.
+          </p>
         </div>
       </div>
 
