@@ -6,7 +6,7 @@ import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useToast } from '../hooks/use-toast';
-import { mockAuctions, mockPlayers, mockTeams, formatCurrency } from '../data/mock';
+import ApiService from '../services/api';
 
 const AuctionRoom = () => {
   const { id } = useParams();
@@ -16,10 +16,37 @@ const AuctionRoom = () => {
   const [bidAmount, setBidAmount] = useState('');
   const [userBid, setUserBid] = useState(0);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  
-  const auction = mockAuctions.find(a => a.id === parseInt(id));
-  const currentPlayer = mockPlayers[currentPlayerIndex];
-  const userTeam = mockTeams[0]; // User's team
+  const [auction, setAuction] = useState(null);
+  const [players, setPlayers] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [auctionData, playersData, teamsData] = await Promise.all([
+          ApiService.getAuction(id),
+          ApiService.getPlayers(),
+          ApiService.getTeams()
+        ]);
+        
+        setAuction(auctionData);
+        setPlayers(playersData);
+        setTeams(teamsData);
+      } catch (error) {
+        console.error('Error fetching auction data:', error);
+        setError('Auction not found');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -27,18 +54,29 @@ const AuctionRoom = () => {
       return () => clearTimeout(timer);
     } else {
       // Move to next player when time runs out
-      if (currentPlayerIndex < mockPlayers.length - 1) {
+      if (currentPlayerIndex < players.length - 1) {
         setCurrentPlayerIndex(currentPlayerIndex + 1);
         setTimeLeft(60);
         setUserBid(0);
         setBidAmount('');
       }
     }
-  }, [timeLeft, currentPlayerIndex]);
+  }, [timeLeft, currentPlayerIndex, players.length]);
 
-  const handleBid = () => {
+  const handleBid = async () => {
     const bid = parseInt(bidAmount);
-    if (!bid || bid <= currentPlayer.currentBid) {
+    const currentPlayer = players[currentPlayerIndex];
+    
+    if (!currentPlayer) {
+      toast({
+        title: "Error",
+        description: "No player selected for bidding",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!bid || bid <= currentPlayer.current_bid) {
       toast({
         title: "Invalid Bid",
         description: "Bid must be higher than current bid",
@@ -47,7 +85,8 @@ const AuctionRoom = () => {
       return;
     }
 
-    if (bid > userTeam.remaining) {
+    const userTeam = teams.find(team => team.owner_name === "Cricket Fan");
+    if (userTeam && bid > userTeam.remaining) {
       toast({
         title: "Insufficient Budget",
         description: "You don't have enough budget for this bid",
@@ -56,21 +95,116 @@ const AuctionRoom = () => {
       return;
     }
 
-    setUserBid(bid);
-    currentPlayer.currentBid = bid;
-    toast({
-      title: "Bid Placed! 🎯",
-      description: `You bid ${formatCurrency(bid)} for ${currentPlayer.name}`,
-    });
-    setBidAmount('');
+    try {
+      await ApiService.placeBid(currentPlayer.id, bid, "Your Team");
+      setUserBid(bid);
+      toast({
+        title: "Bid Placed! 🎯",
+        description: `You bid ${ApiService.formatCurrency(bid)} for ${currentPlayer.name}`,
+      });
+      setBidAmount('');
+      
+      // Update local player data
+      const updatedPlayers = [...players];
+      updatedPlayers[currentPlayerIndex].current_bid = bid;
+      setPlayers(updatedPlayers);
+    } catch (error) {
+      toast({
+        title: "Bid Failed",
+        description: error.response?.data?.detail || "Failed to place bid",
+        variant: "destructive"
+      });
+    }
   };
 
   const quickBidAmounts = [100000, 500000, 1000000, 2000000];
 
-  if (!auction) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p>Auction not found</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center pb-20">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Loading auction...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !auction) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+        <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4">
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => navigate('/auctions')}
+              className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-lg font-bold">Auction Not Found</h1>
+          </div>
+        </div>
+        
+        <div className="p-4 flex-1 flex items-center justify-center">
+          <Card className="shadow-lg max-w-md w-full">
+            <CardContent className="p-8 text-center">
+              <div className="text-gray-400 mb-4">
+                <Gavel size={48} className="mx-auto mb-2" />
+                <h3 className="text-lg font-medium text-gray-900">Auction Not Available</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  The auction you're looking for doesn't exist or has ended.
+                </p>
+                <Button 
+                  onClick={() => navigate('/auctions')}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  View Available Auctions
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const currentPlayer = players[currentPlayerIndex];
+  const userTeam = teams.find(team => team.owner_name === "Cricket Fan") || teams[0];
+
+  if (!currentPlayer) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => navigate('/auctions')}
+              className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-lg font-bold">Auction Complete</h1>
+          </div>
+        </div>
+        
+        <div className="p-4 flex-1 flex items-center justify-center">
+          <Card className="shadow-lg max-w-md w-full">
+            <CardContent className="p-8 text-center">
+              <div className="text-gray-400 mb-4">
+                <Trophy size={48} className="mx-auto mb-2" />
+                <h3 className="text-lg font-medium text-gray-900">Auction Complete!</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  All players have been auctioned. Check your team!
+                </p>
+                <Button 
+                  onClick={() => navigate('/teams')}
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                >
+                  View My Team
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -91,7 +225,7 @@ const AuctionRoom = () => {
             <div className="flex items-center space-x-4 text-sm text-red-100">
               <div className="flex items-center space-x-1">
                 <Users size={14} />
-                <span>{auction.participants} teams</span>
+                <span>{auction.participants?.length || 0} teams</span>
               </div>
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -139,7 +273,7 @@ const AuctionRoom = () => {
                 🔴 NOW BIDDING
               </Badge>
               <img 
-                src={currentPlayer.image} 
+                src={currentPlayer.image_url} 
                 alt={currentPlayer.name}
                 className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-blue-200 shadow-lg"
               />
@@ -150,11 +284,11 @@ const AuctionRoom = () => {
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <p className="text-sm text-gray-600">Base Price</p>
-                <p className="text-lg font-bold text-green-600">{formatCurrency(currentPlayer.basePrice)}</p>
+                <p className="text-lg font-bold text-green-600">{ApiService.formatCurrency(currentPlayer.base_price)}</p>
               </div>
               <div className="text-center p-3 bg-blue-50 rounded-lg">
                 <p className="text-sm text-gray-600">Current Bid</p>
-                <p className="text-lg font-bold text-blue-600">{formatCurrency(currentPlayer.currentBid)}</p>
+                <p className="text-lg font-bold text-blue-600">{ApiService.formatCurrency(currentPlayer.current_bid)}</p>
               </div>
             </div>
 
@@ -164,19 +298,19 @@ const AuctionRoom = () => {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Matches:</span>
-                  <span className="font-medium">{currentPlayer.stats.matches}</span>
+                  <span className="font-medium">{currentPlayer.stats?.matches || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Strike Rate:</span>
-                  <span className="font-medium">{currentPlayer.stats.strikeRate}</span>
+                  <span className="font-medium">{currentPlayer.stats?.strike_rate || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Runs:</span>
-                  <span className="font-medium">{currentPlayer.stats.runs}</span>
+                  <span className="font-medium">{currentPlayer.stats?.runs || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Average:</span>
-                  <span className="font-medium">{currentPlayer.stats.average}</span>
+                  <span className="font-medium">{currentPlayer.stats?.average || 0}</span>
                 </div>
               </div>
             </div>
@@ -185,7 +319,7 @@ const AuctionRoom = () => {
             <div className="mb-6">
               <h4 className="font-semibold text-gray-900 mb-2">Active Bidders</h4>
               <div className="flex flex-wrap gap-2">
-                {currentPlayer.bidders.map((bidder, index) => (
+                {currentPlayer.bidders?.map((bidder, index) => (
                   <Badge key={index} variant="outline" className="border-blue-200 text-blue-600">
                     {bidder}
                   </Badge>
@@ -219,7 +353,7 @@ const AuctionRoom = () => {
               </div>
               <Button 
                 onClick={handleBid}
-                disabled={!bidAmount || parseInt(bidAmount) <= currentPlayer.currentBid}
+                disabled={!bidAmount || parseInt(bidAmount) <= currentPlayer.current_bid}
                 className="bg-green-500 hover:bg-green-600 text-white px-6"
               >
                 <Gavel size={16} className="mr-1" />
@@ -234,10 +368,10 @@ const AuctionRoom = () => {
                   key={amount}
                   variant="outline"
                   size="sm"
-                  onClick={() => setBidAmount((currentPlayer.currentBid + amount).toString())}
+                  onClick={() => setBidAmount((currentPlayer.current_bid + amount).toString())}
                   className="border-blue-200 text-blue-600 hover:bg-blue-50"
                 >
-                  +{formatCurrency(amount)}
+                  +{ApiService.formatCurrency(amount)}
                 </Button>
               ))}
             </div>
@@ -246,7 +380,7 @@ const AuctionRoom = () => {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Remaining Budget:</span>
-                <span className="font-bold text-yellow-600">{formatCurrency(userTeam.remaining)}</span>
+                <span className="font-bold text-yellow-600">{ApiService.formatCurrency(userTeam.remaining)}</span>
               </div>
               <div className="w-full bg-yellow-200 rounded-full h-2 mt-2">
                 <div 
@@ -263,7 +397,7 @@ const AuctionRoom = () => {
           <CardContent className="p-4">
             <h3 className="font-semibold text-gray-900 mb-3">Participating Teams</h3>
             <div className="space-y-2">
-              {mockTeams.map((team) => (
+              {teams.slice(0, 3).map((team) => (
                 <div key={team.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div 
@@ -274,12 +408,12 @@ const AuctionRoom = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{team.name}</p>
-                      <p className="text-xs text-gray-500">{team.owner}</p>
+                      <p className="text-xs text-gray-500">{team.owner_name}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium">{formatCurrency(team.remaining)}</p>
-                    <p className="text-xs text-gray-500">{team.players}/{team.maxPlayers} players</p>
+                    <p className="text-sm font-medium">{ApiService.formatCurrency(team.remaining)}</p>
+                    <p className="text-xs text-gray-500">{team.players?.length || 0}/{team.max_players} players</p>
                   </div>
                 </div>
               ))}
