@@ -236,7 +236,11 @@ const Home = () => {
           <CardContent className="pt-0">
             <div className="space-y-3">
               {auctions.filter(auction => auction.status === 'upcoming').map((auction) => (
-                <div key={auction.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div 
+                  key={auction.id} 
+                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
+                  onClick={() => navigate(`/auction/${auction.id}`)}
+                >
                   <div>
                     <h4 className="font-semibold text-gray-900">{auction.name}</h4>
                     <p className="text-sm text-gray-500">{auction.participants?.length || 0} teams registered</p>
@@ -251,6 +255,24 @@ const Home = () => {
                   </div>
                 </div>
               ))}
+              
+              {/* If no upcoming auctions, show fallback with navigation */}
+              {auctions.filter(auction => auction.status === 'upcoming').length === 0 && (
+                <div 
+                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
+                  onClick={() => navigate('/auctions')}
+                >
+                  <div>
+                    <h4 className="font-semibold text-gray-900">View All Auctions</h4>
+                    <p className="text-sm text-gray-500">Browse available cricket auctions</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge className="bg-blue-500 text-white">
+                      Browse
+                    </Badge>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
