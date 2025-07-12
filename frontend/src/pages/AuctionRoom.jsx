@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Clock, Gavel, Heart, Share2, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Gavel, Heart, Share2, Plus, Minus, Trophy } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
