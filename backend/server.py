@@ -6,6 +6,7 @@ from typing import List, Optional
 from datetime import datetime
 import os
 import logging
+from seed_data import PLAYERS_DATA
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent
