@@ -25,7 +25,7 @@ const Teams = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-4 pb-6">
         <div className="flex items-center justify-between mb-4">
@@ -64,7 +64,7 @@ const Teams = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 -mt-2">
+      <div className="p-4 space-y-6 -mt-2 pb-6">
         {/* Team Overview */}
         <Card className="shadow-lg bg-gradient-to-r from-white to-blue-50 border-2 border-blue-200">
           <CardHeader className="pb-4">
