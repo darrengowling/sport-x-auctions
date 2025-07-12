@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, Users, Trophy, Target, Zap, Shield, Heart, ArrowLeft } from 'lucide-react';
+import { ArrowRight, Users, Trophy, Target, Zap, Shield, Heart, ArrowLeft, UserPlus, LogIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 
@@ -50,6 +50,18 @@ const SplashPage = () => {
     navigate('/home');
   };
 
+  const handleCreateAccount = () => {
+    localStorage.setItem('sportx_splash_seen', 'true');
+    // For now, redirect to home - in future this would go to signup
+    navigate('/home');
+  };
+
+  const handleSignIn = () => {
+    localStorage.setItem('sportx_splash_seen', 'true');
+    // For now, redirect to home - in future this would go to login
+    navigate('/home');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 relative overflow-hidden">
       {/* Animated Background Elements */}
@@ -61,7 +73,7 @@ const SplashPage = () => {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Header with Back Button */}
+        {/* Header with Back Button - only show if accessed directly */}
         {isDirectAccess && (
           <div className="absolute top-4 left-4 z-20">
             <button 
@@ -178,17 +190,29 @@ const SplashPage = () => {
             </p>
           </div>
 
-          <div className="space-y-4 max-w-sm mx-auto">
+          <div className="space-y-3 max-w-sm mx-auto">
+            {/* Primary Action - Create Account */}
             <Button 
-              onClick={handleEnterArena}
+              onClick={handleCreateAccount}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-2xl transform transition-all duration-200 hover:scale-105"
             >
-              <span className="mr-2">Enter the Arena</span>
-              <ArrowRight size={20} />
+              <UserPlus size={18} className="mr-2" />
+              <span>Create Account</span>
+            </Button>
+
+            {/* Secondary Action - Sign In */}
+            <Button 
+              onClick={handleSignIn}
+              variant="outline"
+              className="w-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold py-4 rounded-xl backdrop-blur-sm"
+            >
+              <LogIn size={18} className="mr-2" />
+              <span>Sign In</span>
             </Button>
             
+            {/* Tertiary Action - Continue as Guest */}
             <button 
-              onClick={() => navigate('/home')}
+              onClick={handleEnterArena}
               className="w-full text-blue-200 font-medium py-3 text-sm hover:text-white transition-colors"
             >
               Continue as Guest
