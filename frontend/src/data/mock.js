@@ -8,7 +8,7 @@ export const mockPlayers = [
     role: "Batsman",
     basePrice: 2000000,
     currentBid: 15000000,
-    image: "https://images.unsplash.com/photo-1531384370597-8590413be50c?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 230,
       runs: 7263,
@@ -27,7 +27,7 @@ export const mockPlayers = [
     role: "Wicket-Keeper",
     basePrice: 1500000,
     currentBid: 12000000,
-    image: "https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 264,
       runs: 5082,
@@ -65,7 +65,7 @@ export const mockPlayers = [
     role: "Batsman",
     basePrice: 2200000,
     currentBid: 13500000,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 243,
       runs: 6628,
