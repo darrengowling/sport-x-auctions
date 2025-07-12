@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Users, Trophy, Target, Zap, Shield, Heart } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ArrowRight, Users, Trophy, Target, Zap, Shield, Heart, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 
 const SplashPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Check if this is accessed directly (not from root)
+  const isDirectAccess = location.pathname === '/splash';
 
   useEffect(() => {
     setIsVisible(true);
@@ -41,6 +45,11 @@ const SplashPage = () => {
   const currentSlideData = slides[currentSlide];
   const CurrentIcon = currentSlideData.icon;
 
+  const handleEnterArena = () => {
+    localStorage.setItem('sportx_splash_seen', 'true');
+    navigate('/home');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 relative overflow-hidden">
       {/* Animated Background Elements */}
@@ -52,6 +61,18 @@ const SplashPage = () => {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Header with Back Button */}
+        {isDirectAccess && (
+          <div className="absolute top-4 left-4 z-20">
+            <button 
+              onClick={() => navigate('/home')}
+              className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors text-white"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+        )}
+
         {/* Header */}
         <div className={`text-center pt-16 pb-8 transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="flex items-center justify-center mb-6">
@@ -159,7 +180,7 @@ const SplashPage = () => {
 
           <div className="space-y-4 max-w-sm mx-auto">
             <Button 
-              onClick={() => navigate('/home')}
+              onClick={handleEnterArena}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-2xl transform transition-all duration-200 hover:scale-105"
             >
               <span className="mr-2">Enter the Arena</span>
