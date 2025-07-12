@@ -42,10 +42,10 @@ function App() {
 
   useEffect(() => {
     testBackendConnection();
-    // Simulate user loading
+    // Quick backend connection test - reduce loading time
     setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 500);
   }, []);
 
   if (loading) {
