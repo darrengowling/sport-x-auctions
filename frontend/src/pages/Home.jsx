@@ -4,12 +4,22 @@ import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy } from 'lu
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { mockAuctions, mockPlayers, mockUser, formatCurrency } from '../data/mock';
+import ApiService from '../services/api';
 
 const Home = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(3);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [players, setPlayers] = useState([]);
+  const [auctions, setAuctions] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [user] = useState({
+    name: "Cricket Fan",
+    winRate: 42.8,
+    totalWins: 12,
+    totalMatches: 28
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,8 +28,43 @@ const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const liveAuction = mockAuctions.find(auction => auction.status === 'live');
-  const hotPlayers = mockPlayers.filter(player => player.isHotPick);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [playersData, auctionsData, teamsData] = await Promise.all([
+          ApiService.getPlayers(),
+          ApiService.getAuctions(),
+          ApiService.getTeams()
+        ]);
+        
+        setPlayers(playersData);
+        setAuctions(auctionsData);
+        setTeams(teamsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h1 className="text-3xl font-bold text-white mb-2">Sports X</h1>
+          <p className="text-blue-200">Loading your pro cricket auction experience...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const liveAuction = auctions.find(auction => auction.status === 'live');
+  const hotPlayers = players.filter(player => player.is_hot_pick);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
@@ -55,7 +100,7 @@ const Home = () => {
 
         {/* Welcome Message */}
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-          <h2 className="text-lg font-semibold mb-1">Welcome back, {mockUser.name}! 🏏</h2>
+          <h2 className="text-lg font-semibold mb-1">Welcome back, {user.name}! 🏏</h2>
           <p className="text-blue-100 text-sm">Ready to build your championship team?</p>
         </div>
       </div>
@@ -92,7 +137,7 @@ const Home = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100 text-sm">Your Teams</p>
-                  <p className="text-2xl font-bold">3</p>
+                  <p className="text-2xl font-bold">{teams.length}</p>
                 </div>
                 <Users className="text-blue-200" size={24} />
               </div>
@@ -104,7 +149,7 @@ const Home = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm">Win Rate</p>
-                  <p className="text-2xl font-bold">{mockUser.winRate}%</p>
+                  <p className="text-2xl font-bold">{user.winRate}%</p>
                 </div>
                 <TrendingUp className="text-green-200" size={24} />
               </div>
@@ -132,7 +177,7 @@ const Home = () => {
                   onClick={() => navigate('/auctions')}
                 >
                   <img 
-                    src={player.image} 
+                    src={player.image_url} 
                     alt={player.name}
                     className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
                   />
@@ -141,8 +186,8 @@ const Home = () => {
                     <p className="text-sm text-gray-500">{player.team} • {player.role}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">{formatCurrency(player.currentBid)}</p>
-                    <p className="text-xs text-gray-500">{player.bidders.length} bidders</p>
+                    <p className="font-bold text-green-600">{ApiService.formatCurrency(player.current_bid)}</p>
+                    <p className="text-xs text-gray-500">{player.bidders?.length || 0} bidders</p>
                   </div>
                 </div>
               ))}
@@ -184,14 +229,16 @@ const Home = () => {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
-              {mockAuctions.filter(auction => auction.status === 'upcoming').map((auction) => (
+              {auctions.filter(auction => auction.status === 'upcoming').map((auction) => (
                 <div key={auction.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                   <div>
                     <h4 className="font-semibold text-gray-900">{auction.name}</h4>
-                    <p className="text-sm text-gray-500">{auction.participants} teams registered</p>
+                    <p className="text-sm text-gray-500">{auction.participants?.length || 0} teams registered</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-blue-600">Jan 15, 2:00 PM</p>
+                    <p className="text-sm font-medium text-blue-600">
+                      {new Date(auction.start_time).toLocaleDateString()}
+                    </p>
                     <Badge variant="outline" className="border-blue-200 text-blue-600">
                       Upcoming
                     </Badge>
