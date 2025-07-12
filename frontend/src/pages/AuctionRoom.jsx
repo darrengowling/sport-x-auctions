@@ -210,7 +210,7 @@ const AuctionRoom = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4">
         <div className="flex items-center space-x-3 mb-4">
@@ -264,7 +264,7 @@ const AuctionRoom = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4 -mt-2">
+      <div className="p-4 space-y-4 -mt-2 pb-6">
         {/* Current Player */}
         <Card className="shadow-xl bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200">
           <CardContent className="p-6">
