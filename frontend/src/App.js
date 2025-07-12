@@ -19,10 +19,10 @@ const API = `${BACKEND_URL}/api`;
 
 const AppLayout = ({ children }) => (
   <>
-    <div className="pb-20">
+    <Navigation />
+    <div className="pt-2">
       {children}
     </div>
-    <Navigation />
   </>
 );
 
