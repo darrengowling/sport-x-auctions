@@ -5,7 +5,7 @@ import axios from "axios";
 
 // Components
 import Navigation from "./components/Navigation";
-import SplashPage from "./pages/SplashPage";
+import SplashHandler from "./pages/SplashHandler";
 import Home from "./pages/Home";
 import Auctions from "./pages/Auctions";
 import AuctionRoom from "./pages/AuctionRoom";
@@ -17,8 +17,16 @@ import { Toaster } from "./components/ui/toaster";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+const AppLayout = ({ children }) => (
+  <>
+    <div className="pb-20">
+      {children}
+    </div>
+    <Navigation />
+  </>
+);
+
 function App() {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Test backend connection
@@ -55,59 +63,16 @@ function App() {
     <div className="App bg-slate-50 min-h-screen">
       <BrowserRouter>
         <Routes>
-          {/* Splash route */}
-          <Route path="/splash" element={<SplashPage />} />
+          {/* Root route - check splash status */}
+          <Route path="/" element={<SplashHandler />} />
           
           {/* Main app routes */}
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={
-            <>
-              <div className="pb-20">
-                <Home />
-              </div>
-              <Navigation />
-            </>
-          } />
-          <Route path="/auctions" element={
-            <>
-              <div className="pb-20">
-                <Auctions />
-              </div>
-              <Navigation />
-            </>
-          } />
-          <Route path="/auction/:id" element={
-            <>
-              <div className="pb-20">
-                <AuctionRoom />
-              </div>
-              <Navigation />
-            </>
-          } />
-          <Route path="/teams" element={
-            <>
-              <div className="pb-20">
-                <Teams />
-              </div>
-              <Navigation />
-            </>
-          } />
-          <Route path="/leagues" element={
-            <>
-              <div className="pb-20">
-                <Leagues />
-              </div>
-              <Navigation />
-            </>
-          } />
-          <Route path="/profile" element={
-            <>
-              <div className="pb-20">
-                <Profile />
-              </div>
-              <Navigation />
-            </>
-          } />
+          <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
+          <Route path="/auctions" element={<AppLayout><Auctions /></AppLayout>} />
+          <Route path="/auction/:id" element={<AppLayout><AuctionRoom /></AppLayout>} />
+          <Route path="/teams" element={<AppLayout><Teams /></AppLayout>} />
+          <Route path="/leagues" element={<AppLayout><Leagues /></AppLayout>} />
+          <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
         </Routes>
         <Toaster />
       </BrowserRouter>
