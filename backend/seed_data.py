@@ -3,12 +3,12 @@ VIRAT_KOHLI_BASE64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4gxYSUN
 PLAYERS_DATA = [
     {
         "id": "player-1",
-        "name": "Virat Kohli",
-        "team": "RCB",
+        "name": "David Warner",
+        "team": "SRH",
         "role": "Batsman",
         "base_price": 2000000,
         "current_bid": 15000000,
-        "image_url": VIRAT_KOHLI_BASE64,
+        "image_url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RGF2aWQgV2FybmVyPC90ZXh0Pgo8L3N2Zz4=",
         "stats": {
             "matches": 230,
             "runs": 7263,
