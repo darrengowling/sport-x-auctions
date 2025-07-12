@@ -1,13 +1,12 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from typing import List, Optional
+from datetime import datetime
 import os
 import logging
 from pathlib import Path
-
-# Import route modules
-from routes import players, teams, auctions, leagues, users
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -17,7 +16,7 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
+# Create the main app
 app = FastAPI(title="Sports X Pro Cricket Auctions API", version="1.0.0")
 
 # Create a router with the /api prefix
@@ -32,14 +31,116 @@ async def root():
 async def health_check():
     return {"status": "healthy", "service": "Sports X API"}
 
-# Include all route modules
-app.include_router(players.router)
-app.include_router(teams.router)
-app.include_router(auctions.router)
-app.include_router(leagues.router)
-app.include_router(users.router)
+# Simple endpoints for players
+@api_router.get("/players")
+async def get_players():
+    """Get all players"""
+    players = await db.players.find().to_list(100)
+    for player in players:
+        player.pop('_id', None)
+    return players
 
-# Include the basic router
+@api_router.get("/players/{player_id}")
+async def get_player(player_id: str):
+    """Get a specific player"""
+    player = await db.players.find_one({"id": player_id})
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+    player.pop('_id', None)
+    return player
+
+@api_router.post("/players/{player_id}/bid")
+async def place_bid(player_id: str, bid_amount: int, team_name: str):
+    """Place a bid on a player"""
+    player = await db.players.find_one({"id": player_id})
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+    
+    if bid_amount <= player.get("current_bid", 0):
+        raise HTTPException(status_code=400, detail="Bid must be higher than current bid")
+    
+    # Update player with new bid
+    await db.players.update_one(
+        {"id": player_id},
+        {
+            "$set": {
+                "current_bid": bid_amount,
+                "updated_at": datetime.utcnow()
+            },
+            "$addToSet": {"bidders": team_name}
+        }
+    )
+    
+    # Return updated player
+    updated_player = await db.players.find_one({"id": player_id})
+    updated_player.pop('_id', None)
+    return updated_player
+
+# Simple endpoints for teams
+@api_router.get("/teams")
+async def get_teams():
+    """Get all teams"""
+    teams = await db.teams.find().to_list(100)
+    for team in teams:
+        team.pop('_id', None)
+    return teams
+
+@api_router.get("/teams/{team_id}")
+async def get_team(team_id: str):
+    """Get a specific team"""
+    team = await db.teams.find_one({"id": team_id})
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    team.pop('_id', None)
+    return team
+
+# Simple endpoints for auctions
+@api_router.get("/auctions")
+async def get_auctions():
+    """Get all auctions"""
+    auctions = await db.auctions.find().to_list(100)
+    for auction in auctions:
+        auction.pop('_id', None)
+    return auctions
+
+@api_router.get("/auctions/{auction_id}")
+async def get_auction(auction_id: str):
+    """Get a specific auction"""
+    auction = await db.auctions.find_one({"id": auction_id})
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    auction.pop('_id', None)
+    return auction
+
+# Simple endpoints for leagues
+@api_router.get("/leagues")
+async def get_leagues():
+    """Get all leagues"""
+    leagues = await db.leagues.find().to_list(100)
+    for league in leagues:
+        league.pop('_id', None)
+    return leagues
+
+@api_router.get("/leagues/{league_id}")
+async def get_league(league_id: str):
+    """Get a specific league"""
+    league = await db.leagues.find_one({"id": league_id})
+    if not league:
+        raise HTTPException(status_code=404, detail="League not found")
+    league.pop('_id', None)
+    return league
+
+# Simple endpoints for users
+@api_router.get("/users/{user_id}")
+async def get_user(user_id: str):
+    """Get a specific user"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.pop('_id', None)
+    return user
+
+# Include the router in the main app
 app.include_router(api_router)
 
 app.add_middleware(
@@ -95,7 +196,9 @@ async def seed_database():
                     "fifties": 50
                 },
                 "is_hot_pick": True,
-                "bidders": ["Team Alpha", "Thunderbolts", "Warriors"]
+                "bidders": ["Team Alpha", "Thunderbolts", "Warriors"],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             },
             {
                 "id": "player-2",
@@ -115,7 +218,9 @@ async def seed_database():
                     "fifties": 24
                 },
                 "is_hot_pick": True,
-                "bidders": ["Storm Kings", "Fire Dragons"]
+                "bidders": ["Storm Kings", "Fire Dragons"],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             },
             {
                 "id": "player-3",
@@ -135,7 +240,9 @@ async def seed_database():
                     "best_figures": "4/17"
                 },
                 "is_hot_pick": False,
-                "bidders": ["Lightning Bolts"]
+                "bidders": ["Lightning Bolts"],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             },
             {
                 "id": "player-4",
@@ -155,7 +262,9 @@ async def seed_database():
                     "fifties": 42
                 },
                 "is_hot_pick": True,
-                "bidders": ["Team Alpha", "Storm Kings", "Warriors"]
+                "bidders": ["Team Alpha", "Storm Kings", "Warriors"],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             }
         ]
 
@@ -174,7 +283,9 @@ async def seed_database():
             "total_matches": 28,
             "win_rate": 42.8,
             "favorite_team": "RCB",
-            "team_ids": ["team-1"]
+            "team_ids": ["team-1"],
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
         }
 
         await db.users.insert_one(user_data)
@@ -209,7 +320,9 @@ async def seed_database():
                 ],
                 "max_players": 15,
                 "avatar": "🏆",
-                "color": "#3B82F6"
+                "color": "#3B82F6",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             },
             {
                 "id": "team-2",
@@ -222,7 +335,9 @@ async def seed_database():
                 "players": [],
                 "max_players": 15,
                 "avatar": "⚡",
-                "color": "#F59E0B"
+                "color": "#F59E0B",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             }
         ]
 
@@ -238,14 +353,16 @@ async def seed_database():
             "current_player_id": "player-1",
             "time_remaining": 45,
             "total_budget": 50000000,
-            "start_time": "2025-01-15T10:00:00Z",
+            "start_time": datetime.utcnow(),
             "rules": {
                 "max_players": 15,
                 "min_players": 11,
                 "max_overseas": 4,
                 "retention_allowed": True
             },
-            "bids": []
+            "bids": [],
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
         }
 
         await db.auctions.insert_one(auction_data)
@@ -265,7 +382,9 @@ async def seed_database():
                 "prize_pool": "₹50,000",
                 "entry_fee": "₹1,000",
                 "code": "FRC2025",
-                "description": "Epic battle among friends for cricket supremacy!"
+                "description": "Epic battle among friends for cricket supremacy!",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             },
             {
                 "id": "league-2",
@@ -278,7 +397,9 @@ async def seed_database():
                 "max_participants": 1000,
                 "prize_pool": "₹10,00,000",
                 "entry_fee": "₹5,000",
-                "description": "The ultimate cricket championship"
+                "description": "The ultimate cricket championship",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
             }
         ]
 
