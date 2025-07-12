@@ -1,51 +1,70 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 
+// Components
+import Navigation from "./components/Navigation";
+import Home from "./pages/Home";
+import Auctions from "./pages/Auctions";
+import AuctionRoom from "./pages/AuctionRoom";
+import Teams from "./pages/Teams";
+import Leagues from "./pages/Leagues";
+import Profile from "./pages/Profile";
+import { Toaster } from "./components/ui/toaster";
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Test backend connection
+  const testBackendConnection = async () => {
     try {
       const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
+      console.log('Backend connected:', response.data.message);
     } catch (e) {
-      console.error(e, `errored out requesting / api`);
+      console.error('Backend connection failed:', e);
     }
   };
 
   useEffect(() => {
-    helloWorldApi();
+    testBackendConnection();
+    // Simulate user loading
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }, []);
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h1 className="text-3xl font-bold text-white mb-2">Sports X</h1>
+          <p className="text-blue-200">Loading your cricket auction experience...</p>
+        </div>
+      </div>
+    );
+  }
 
-function App() {
   return (
-    <div className="App">
+    <div className="App bg-slate-50 min-h-screen">
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <div className="pb-20"> {/* Bottom padding for navigation */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auctions" element={<Auctions />} />
+            <Route path="/auction/:id" element={<AuctionRoom />} />
+            <Route path="/teams" element={<Teams />} />
+            <Route path="/leagues" element={<Leagues />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </div>
+        <Navigation />
+        <Toaster />
       </BrowserRouter>
     </div>
   );
