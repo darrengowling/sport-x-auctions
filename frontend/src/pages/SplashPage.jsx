@@ -46,18 +46,18 @@ const SplashPage = () => {
   const CurrentIcon = currentSlideData.icon;
 
   const handleEnterArena = () => {
-    localStorage.setItem('sportx_splash_seen', 'true');
+    // No localStorage - splash should appear every time user visits root
     navigate('/home');
   };
 
   const handleCreateAccount = () => {
-    localStorage.setItem('sportx_splash_seen', 'true');
+    // No localStorage - splash should appear every time user visits root
     // For now, redirect to home - in future this would go to signup
     navigate('/home');
   };
 
   const handleSignIn = () => {
-    localStorage.setItem('sportx_splash_seen', 'true');
+    // No localStorage - splash should appear every time user visits root
     // For now, redirect to home - in future this would go to login
     navigate('/home');
   };
