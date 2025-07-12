@@ -74,7 +74,7 @@ const Auctions = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-6">
         <h1 className="text-2xl font-bold mb-4">Auctions</h1>
@@ -108,7 +108,7 @@ const Auctions = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 -mt-2">
+      <div className="p-4 space-y-6 -mt-2 pb-6">
         {/* Featured Players */}
         <Card className="shadow-lg bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
           <CardHeader className="pb-3">
