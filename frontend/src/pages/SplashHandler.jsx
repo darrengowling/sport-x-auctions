@@ -8,9 +8,13 @@ const SplashHandler = () => {
   useEffect(() => {
     // Check if user has seen splash before for first-time experience
     const hasSeenSplash = localStorage.getItem('sportx_splash_seen');
-    if (hasSeenSplash) {
-      // If user has seen splash, redirect to home for first load only
-      navigate('/home', { replace: true });
+    
+    // Only redirect if user has explicitly seen splash AND this is not a direct visit to root
+    if (hasSeenSplash && window.location.pathname === '/') {
+      // Small delay to show splash briefly, then redirect
+      setTimeout(() => {
+        navigate('/home', { replace: true });
+      }, 1500);
     }
   }, [navigate]);
 
