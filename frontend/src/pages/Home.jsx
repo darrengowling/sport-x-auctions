@@ -106,7 +106,7 @@ const Home = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 -mt-2">
+      <div className="p-4 space-y-6 -mt-2 pb-6">
         {/* Live Auction Alert */}
         {liveAuction && (
           <Card className="border-2 border-red-500 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg transform hover:scale-105 transition-transform duration-200">
