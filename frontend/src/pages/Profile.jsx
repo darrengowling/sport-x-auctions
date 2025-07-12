@@ -201,8 +201,8 @@ const Profile = () => {
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
               <span className="text-white font-bold text-lg">SX</span>
             </div>
-            <h3 className="font-bold text-gray-900 mb-1">Sports X</h3>
-            <p className="text-sm text-gray-600 mb-3">Pro Cricket Auctions</p>
+            <h3 className="font-bold text-gray-900 mb-1">Sport X</h3>
+            <p className="text-sm text-gray-600 mb-3">Sports gaming with friends</p>
             <p className="text-xs text-gray-500">Version 1.0.0 • Made with ❤️ by Sports X Team</p>
           </CardContent>
         </Card>
