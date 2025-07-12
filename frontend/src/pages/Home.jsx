@@ -76,8 +76,8 @@ const Home = () => {
               <span className="text-blue-600 font-bold text-lg">SX</span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Sports X</h1>
-              <p className="text-blue-100 text-sm">Pro Cricket Auctions</p>
+              <h1 className="text-2xl font-bold">Sport X</h1>
+              <p className="text-blue-100 text-sm">Sports gaming with friends</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
