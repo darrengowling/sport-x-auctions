@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Clock, Users, ArrowRight, Flame, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { mockAuctions, mockPlayers, formatCurrency } from '../data/mock';
+import ApiService from '../services/api';
 
 const Auctions = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [auctions, setAuctions] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [auctionsData, playersData] = await Promise.all([
+          ApiService.getAuctions(),
+          ApiService.getPlayers()
+        ]);
+        
+        setAuctions(auctionsData);
+        setPlayers(playersData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -30,13 +54,24 @@ const Auctions = () => {
     }
   };
 
-  const filteredAuctions = mockAuctions.filter(auction => {
+  const filteredAuctions = auctions.filter(auction => {
     const matchesSearch = auction.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = selectedFilter === 'all' || auction.status === selectedFilter;
     return matchesSearch && matchesFilter;
   });
 
-  const featuredPlayers = mockPlayers.slice(0, 4);
+  const featuredPlayers = players.slice(0, 4);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center pb-20">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Loading auctions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
@@ -91,11 +126,11 @@ const Auctions = () => {
                 <div 
                   key={player.id}
                   className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => navigate('/auction/1')}
+                  onClick={() => navigate('/auction/auction-1')}
                 >
                   <div className="flex items-center space-x-3">
                     <img 
-                      src={player.image} 
+                      src={player.image_url} 
                       alt={player.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -105,8 +140,8 @@ const Auctions = () => {
                     </div>
                   </div>
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-sm font-bold text-green-600">{formatCurrency(player.currentBid)}</span>
-                    {player.isHotPick && <Flame className="text-orange-500" size={12} />}
+                    <span className="text-sm font-bold text-green-600">{ApiService.formatCurrency(player.current_bid)}</span>
+                    {player.is_hot_pick && <Flame className="text-orange-500" size={12} />}
                   </div>
                 </div>
               ))}
@@ -134,12 +169,12 @@ const Auctions = () => {
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-1">
                         <Users size={14} />
-                        <span>{auction.participants} teams</span>
+                        <span>{auction.participants?.length || 0} teams</span>
                       </div>
-                      {auction.status === 'live' && auction.timeRemaining && (
+                      {auction.status === 'live' && auction.time_remaining && (
                         <div className="flex items-center space-x-1">
                           <Clock size={14} />
-                          <span>{auction.timeRemaining}s left</span>
+                          <span>{auction.time_remaining}s left</span>
                         </div>
                       )}
                     </div>
@@ -147,20 +182,18 @@ const Auctions = () => {
                   <ArrowRight className="text-gray-400 mt-2" size={20} />
                 </div>
 
-                {auction.status === 'live' && auction.currentPlayer && (
+                {auction.status === 'live' && auction.current_player_id && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
                     <div className="flex items-center space-x-3">
-                      <img 
-                        src={auction.currentPlayer.image} 
-                        alt={auction.currentPlayer.name}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
+                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">P</span>
+                      </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">
-                          Now bidding: {auction.currentPlayer.name}
+                          Live auction in progress
                         </p>
                         <p className="text-xs text-gray-600">
-                          Current bid: {formatCurrency(auction.currentPlayer.currentBid)}
+                          Budget: {ApiService.formatCurrency(auction.total_budget)}
                         </p>
                       </div>
                       <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
@@ -170,11 +203,11 @@ const Auctions = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-600">
-                    {auction.status === 'upcoming' && (
-                      <span>Starts: Jan 15, 2:00 PM</span>
+                    {auction.status === 'upcoming' && auction.start_time && (
+                      <span>Starts: {new Date(auction.start_time).toLocaleDateString()}</span>
                     )}
-                    {auction.status === 'completed' && auction.winner && (
-                      <span>Winner: {auction.winner}</span>
+                    {auction.status === 'completed' && (
+                      <span>Completed</span>
                     )}
                     {auction.status === 'live' && (
                       <span className="text-red-600 font-medium">🔴 Live Now</span>
