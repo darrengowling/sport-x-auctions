@@ -7,7 +7,7 @@ const Navigation = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: Home, label: 'Home', path: '/home' },
     { icon: Gavel, label: 'Auctions', path: '/auctions' },
     { icon: Users, label: 'Teams', path: '/teams' },
     { icon: Trophy, label: 'Leagues', path: '/leagues' },
@@ -15,7 +15,7 @@ const Navigation = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+    <div className="sticky top-0 bg-white border-b border-gray-200 z-50 shadow-sm">
       <div className="grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -28,13 +28,13 @@ const Navigation = () => {
               className={`flex flex-col items-center justify-center space-y-1 transition-colors duration-200 ${
                 isActive 
                   ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-500 hover:text-gray-700'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Icon size={20} className={isActive ? 'text-blue-600' : ''} />
               <span className="text-xs font-medium">{item.label}</span>
               {isActive && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-b-full"></div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full"></div>
               )}
             </button>
           );
