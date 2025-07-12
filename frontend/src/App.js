@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 
 // Components
@@ -20,7 +20,6 @@ const API = `${BACKEND_URL}/api`;
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
 
   // Test backend connection
   const testBackendConnection = async () => {
@@ -38,18 +37,7 @@ function App() {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-
-    // Check if user has seen splash before
-    const hasSeenSplash = localStorage.getItem('sportx_splash_seen');
-    if (hasSeenSplash) {
-      setShowSplash(false);
-    }
   }, []);
-
-  const handleSplashComplete = () => {
-    localStorage.setItem('sportx_splash_seen', 'true');
-    setShowSplash(false);
-  };
 
   if (loading) {
     return (
@@ -66,26 +54,61 @@ function App() {
   return (
     <div className="App bg-slate-50 min-h-screen">
       <BrowserRouter>
-        {showSplash ? (
-          <div onClick={handleSplashComplete}>
-            <SplashPage />
-          </div>
-        ) : (
-          <>
-            <div className="pb-20"> {/* Bottom padding for navigation */}
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/auctions" element={<Auctions />} />
-                <Route path="/auction/:id" element={<AuctionRoom />} />
-                <Route path="/teams" element={<Teams />} />
-                <Route path="/leagues" element={<Leagues />} />
-                <Route path="/profile" element={<Profile />} />
-              </Routes>
-            </div>
-            <Navigation />
-          </>
-        )}
+        <Routes>
+          {/* Splash route */}
+          <Route path="/splash" element={<SplashPage />} />
+          
+          {/* Main app routes */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={
+            <>
+              <div className="pb-20">
+                <Home />
+              </div>
+              <Navigation />
+            </>
+          } />
+          <Route path="/auctions" element={
+            <>
+              <div className="pb-20">
+                <Auctions />
+              </div>
+              <Navigation />
+            </>
+          } />
+          <Route path="/auction/:id" element={
+            <>
+              <div className="pb-20">
+                <AuctionRoom />
+              </div>
+              <Navigation />
+            </>
+          } />
+          <Route path="/teams" element={
+            <>
+              <div className="pb-20">
+                <Teams />
+              </div>
+              <Navigation />
+            </>
+          } />
+          <Route path="/leagues" element={
+            <>
+              <div className="pb-20">
+                <Leagues />
+              </div>
+              <Navigation />
+            </>
+          } />
+          <Route path="/profile" element={
+            <>
+              <div className="pb-20">
+                <Profile />
+              </div>
+              <Navigation />
+            </>
+          } />
+        </Routes>
         <Toaster />
       </BrowserRouter>
     </div>
