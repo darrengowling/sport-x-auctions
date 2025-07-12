@@ -6,24 +6,15 @@ const SplashHandler = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user has seen splash before
+    // Check if user has seen splash before for first-time experience
     const hasSeenSplash = localStorage.getItem('sportx_splash_seen');
     if (hasSeenSplash) {
-      // If user has seen splash, redirect to home
+      // If user has seen splash, redirect to home for first load only
       navigate('/home', { replace: true });
     }
   }, [navigate]);
 
-  const handleSplashComplete = () => {
-    localStorage.setItem('sportx_splash_seen', 'true');
-    navigate('/home', { replace: true });
-  };
-
-  return (
-    <div onClick={handleSplashComplete}>
-      <SplashPage onComplete={handleSplashComplete} />
-    </div>
-  );
+  return <SplashPage />;
 };
 
 export default SplashHandler;
