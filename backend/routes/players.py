@@ -1,9 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from typing import List, Optional
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from models.player import Player, PlayerCreate, PlayerUpdate
-from services.database import DatabaseService, players_collection
+from services.database import DatabaseService, db
 
 router = APIRouter(prefix="/api/players", tags=["players"])
+players_collection = db.players
 
 @router.post("/", response_model=Player)
 async def create_player(player_data: PlayerCreate):
