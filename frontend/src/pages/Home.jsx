@@ -32,7 +32,7 @@ const Home = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold">Sports X</h1>
-              <p className="text-blue-100 text-sm">Fantasy Cricket Auctions</p>
+              <p className="text-blue-100 text-sm">Pro Cricket Auctions</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
