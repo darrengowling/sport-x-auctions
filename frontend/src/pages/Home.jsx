@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Flame, Clock, Users, TrendingUp } from 'lucide-react';
+import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
