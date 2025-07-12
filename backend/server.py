@@ -185,7 +185,7 @@ async def seed_database():
                 "role": "Batsman",
                 "base_price": 2000000,
                 "current_bid": 15000000,
-                "image_url": "https://images.unsplash.com/photo-1531384370597-8590413be50c?w=400&h=400&fit=crop&crop=face",
+                "image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=face",
                 "stats": {
                     "matches": 230,
                     "runs": 7263,
