@@ -132,7 +132,10 @@ const Home = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+          <Card 
+            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => navigate('/teams')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -144,7 +147,10 @@ const Home = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
+          <Card 
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => navigate('/teams')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
