@@ -5,6 +5,7 @@ import axios from "axios";
 
 // Components
 import Navigation from "./components/Navigation";
+import SplashPage from "./pages/SplashPage";
 import Home from "./pages/Home";
 import Auctions from "./pages/Auctions";
 import AuctionRoom from "./pages/AuctionRoom";
@@ -19,6 +20,7 @@ const API = `${BACKEND_URL}/api`;
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Test backend connection
   const testBackendConnection = async () => {
@@ -36,14 +38,25 @@ function App() {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
+
+    // Check if user has seen splash before
+    const hasSeenSplash = localStorage.getItem('sportx_splash_seen');
+    if (hasSeenSplash) {
+      setShowSplash(false);
+    }
   }, []);
+
+  const handleSplashComplete = () => {
+    localStorage.setItem('sportx_splash_seen', 'true');
+    setShowSplash(false);
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h1 className="text-3xl font-bold text-white mb-2">Sports X</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Sport X</h1>
           <p className="text-blue-200">Loading your pro cricket auction experience...</p>
         </div>
       </div>
@@ -53,17 +66,26 @@ function App() {
   return (
     <div className="App bg-slate-50 min-h-screen">
       <BrowserRouter>
-        <div className="pb-20"> {/* Bottom padding for navigation */}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/auctions" element={<Auctions />} />
-            <Route path="/auction/:id" element={<AuctionRoom />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/leagues" element={<Leagues />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-        </div>
-        <Navigation />
+        {showSplash ? (
+          <div onClick={handleSplashComplete}>
+            <SplashPage />
+          </div>
+        ) : (
+          <>
+            <div className="pb-20"> {/* Bottom padding for navigation */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/auctions" element={<Auctions />} />
+                <Route path="/auction/:id" element={<AuctionRoom />} />
+                <Route path="/teams" element={<Teams />} />
+                <Route path="/leagues" element={<Leagues />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </div>
+            <Navigation />
+          </>
+        )}
         <Toaster />
       </BrowserRouter>
     </div>
