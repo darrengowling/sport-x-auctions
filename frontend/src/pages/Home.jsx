@@ -101,7 +101,7 @@ const Home = () => {
         {/* Welcome Message */}
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
           <h2 className="text-lg font-semibold mb-1">Welcome back, {user.name}! 🏏</h2>
-          <p className="text-blue-100 text-sm">Ready to build your championship team?</p>
+          <p className="text-blue-100 text-sm">Ready to outbid the ordinary? No bets. No chance.</p>
         </div>
       </div>
 
