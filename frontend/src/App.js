@@ -6,6 +6,7 @@ import axios from "axios";
 // Components
 import Navigation from "./components/Navigation";
 import SplashHandler from "./pages/SplashHandler";
+import SplashPage from "./pages/SplashPage";
 import Home from "./pages/Home";
 import Auctions from "./pages/Auctions";
 import AuctionRoom from "./pages/AuctionRoom";
@@ -65,6 +66,9 @@ function App() {
         <Routes>
           {/* Root route - check splash status */}
           <Route path="/" element={<SplashHandler />} />
+          
+          {/* Splash page - always accessible */}
+          <Route path="/splash" element={<SplashPage />} />
           
           {/* Main app routes */}
           <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
