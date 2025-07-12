@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Gavel, Users, Trophy, User } from 'lucide-react';
+import { Home, Gavel, Users, Trophy, User, Info } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -17,17 +17,29 @@ const Navigation = () => {
   return (
     <div className="sticky top-0 bg-white border-b border-gray-200 z-50 shadow-sm">
       {/* Sport X Brand Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4">
-        <button 
-          onClick={() => navigate('/splash')}
-          className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-        >
-          <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-            <span className="text-blue-600 font-bold text-sm">SX</span>
-          </div>
-          <span className="font-bold text-sm">Sport X</span>
-          <span className="text-xs text-blue-200">- Sports gaming with friends</span>
-        </button>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4">
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={() => navigate('/splash')}
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
+              <span className="text-blue-600 font-bold text-sm">SX</span>
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="font-bold text-sm">Sport X</span>
+              <span className="text-xs text-blue-200 leading-none">Sports gaming with friends</span>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/splash')}
+            className="flex items-center space-x-1 bg-white/20 px-3 py-1 rounded-full hover:bg-white/30 transition-colors"
+          >
+            <Info size={14} />
+            <span className="text-xs font-medium">About</span>
+          </button>
+        </div>
       </div>
 
       {/* Navigation Buttons */}
