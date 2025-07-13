@@ -33,13 +33,16 @@ const Navigation = () => {
             </div>
           </button>
           
-          <button 
-            onClick={() => navigate('/splash')}
-            className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all duration-200 shadow-md"
-          >
-            <Info size={16} />
-            <span className="text-sm font-semibold">About Sport X</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <AuthButtons />
+            <button 
+              onClick={() => navigate('/splash')}
+              className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all duration-200 shadow-md"
+            >
+              <Info size={16} />
+              <span className="text-sm font-semibold hidden sm:inline">About Sport X</span>
+            </button>
+          </div>
         </div>
         
         {/* Tagline */}
