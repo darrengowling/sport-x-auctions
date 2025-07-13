@@ -7,6 +7,7 @@ import axios from "axios";
 import Navigation from "./components/Navigation";
 import SplashHandler from "./pages/SplashHandler";
 import SplashPage from "./pages/SplashPage";
+import HowItWorks from "./pages/HowItWorks";
 import Home from "./pages/Home";
 import Auctions from "./pages/Auctions";
 import AuctionRoom from "./pages/AuctionRoom";
