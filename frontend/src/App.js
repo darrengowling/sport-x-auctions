@@ -65,29 +65,31 @@ function App() {
   }
 
   return (
-    <div className="App bg-slate-50 min-h-screen">
-      <BrowserRouter>
-        <Routes>
-          {/* Root route - check splash status */}
-          <Route path="/" element={<SplashHandler />} />
-          
-          {/* Splash page - always accessible */}
-          <Route path="/splash" element={<SplashPage />} />
-          
-          {/* How it works page - no navigation */}
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          
-          {/* Main app routes */}
-          <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
-          <Route path="/auctions" element={<AppLayout><Auctions /></AppLayout>} />
-          <Route path="/auction/:id" element={<AppLayout><AuctionRoom /></AppLayout>} />
-          <Route path="/teams" element={<AppLayout><Teams /></AppLayout>} />
-          <Route path="/leagues" element={<AppLayout><Leagues /></AppLayout>} />
-          <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
-        </Routes>
-        <Toaster />
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <div className="App bg-slate-50 min-h-screen">
+        <BrowserRouter>
+          <Routes>
+            {/* Root route - check splash status */}
+            <Route path="/" element={<SplashHandler />} />
+            
+            {/* Splash page - always accessible */}
+            <Route path="/splash" element={<SplashPage />} />
+            
+            {/* How it works page - no navigation */}
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            
+            {/* Main app routes */}
+            <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
+            <Route path="/auctions" element={<AppLayout><Auctions /></AppLayout>} />
+            <Route path="/auction/:id" element={<AppLayout><AuctionRoom /></AppLayout>} />
+            <Route path="/teams" element={<AppLayout><Teams /></AppLayout>} />
+            <Route path="/leagues" element={<AppLayout><Leagues /></AppLayout>} />
+            <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+          </Routes>
+          <Toaster />
+        </BrowserRouter>
+      </div>
+    </AuthProvider>
   );
 }
 
