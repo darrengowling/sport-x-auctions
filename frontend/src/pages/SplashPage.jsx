@@ -46,20 +46,18 @@ const SplashPage = () => {
   const CurrentIcon = currentSlideData.icon;
 
   const handleEnterArena = () => {
-    // No localStorage - splash should appear every time user visits root
-    navigate('/home');
+    // Navigate to how it works page instead of directly to home
+    navigate('/how-it-works');
   };
 
   const handleCreateAccount = () => {
-    // No localStorage - splash should appear every time user visits root
-    // For now, redirect to home - in future this would go to signup
-    navigate('/home');
+    // Navigate to how it works page
+    navigate('/how-it-works');
   };
 
   const handleSignIn = () => {
-    // No localStorage - splash should appear every time user visits root
-    // For now, redirect to home - in future this would go to login
-    navigate('/home');
+    // Navigate to how it works page
+    navigate('/how-it-works');
   };
 
   return (
