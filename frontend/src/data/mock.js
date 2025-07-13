@@ -8,7 +8,7 @@ export const mockPlayers = [
     role: "Batsman",
     basePrice: 2000000,
     currentBid: 15000000,
-    image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RGF2aWQgV2FybmVyPC90ZXh0Pgo8L3N2Zz4=",
+    image: "https://images.unsplash.com/photo-1599982946086-eb42d9e14eb8?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 230,
       runs: 7263,
@@ -27,7 +27,7 @@ export const mockPlayers = [
     role: "Wicket-Keeper",
     basePrice: 1500000,
     currentBid: 12000000,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1593341646782-e0b495cff86d?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 264,
       runs: 5082,
@@ -46,7 +46,7 @@ export const mockPlayers = [
     role: "Bowler",
     basePrice: 1800000,
     currentBid: 11000000,
-    image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.pexels.com/photos/13067380/pexels-photo-13067380.jpeg?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 120,
       wickets: 165,
@@ -65,7 +65,7 @@ export const mockPlayers = [
     role: "Batsman",
     basePrice: 2200000,
     currentBid: 13500000,
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+    image: "https://images.pexels.com/photos/7849906/pexels-photo-7849906.jpeg?w=400&h=400&fit=crop&crop=face",
     stats: {
       matches: 243,
       runs: 6628,
