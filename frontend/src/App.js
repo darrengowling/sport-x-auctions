@@ -3,6 +3,9 @@ import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 
+// Contexts
+import { AuthProvider } from "./contexts/AuthContext";
+
 // Components
 import Navigation from "./components/Navigation";
 import SplashHandler from "./pages/SplashHandler";
