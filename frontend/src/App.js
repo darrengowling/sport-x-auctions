@@ -71,6 +71,9 @@ function App() {
           {/* Splash page - always accessible */}
           <Route path="/splash" element={<SplashPage />} />
           
+          {/* How it works page - no navigation */}
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          
           {/* Main app routes */}
           <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
           <Route path="/auctions" element={<AppLayout><Auctions /></AppLayout>} />
