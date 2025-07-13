@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 // Components
 import Navigation from "./components/Navigation";
+import ScrollToTop from "./components/ScrollToTop";
 import SplashHandler from "./pages/SplashHandler";
 import SplashPage from "./pages/SplashPage";
 import HowItWorks from "./pages/HowItWorks";
@@ -68,6 +69,7 @@ function App() {
     <AuthProvider>
       <div className="App bg-slate-50 min-h-screen">
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Root route - check splash status */}
             <Route path="/" element={<SplashHandler />} />
