@@ -150,6 +150,22 @@ export const mockAuctions = [
     participants: 6,
     winner: "Storm Kings",
     endTime: "2025-01-10T18:00:00Z"
+  },
+  {
+    id: 4,
+    name: "Rookie League Auction",
+    status: "upcoming",
+    participants: 16,
+    startTime: "2025-01-20T16:00:00Z",
+    totalBudget: 30000000
+  },
+  {
+    id: 5,
+    name: "T20 Blast Auction",
+    status: "upcoming",
+    participants: 10,
+    startTime: "2025-01-25T12:00:00Z",
+    totalBudget: 40000000
   }
 ];
 
@@ -187,6 +203,28 @@ export const mockLeagues = [
     entryFee: "₹5,000",
     creator: "Sports X",
     maxParticipants: 1000
+  },
+  {
+    id: 4,
+    name: "College Championship",
+    type: "public",
+    participants: 200,
+    status: "active",
+    prize: "₹25,000",
+    entryFee: "₹500",
+    creator: "Sports X",
+    maxParticipants: 500
+  },
+  {
+    id: 5,
+    name: "Beginner's League",
+    type: "public",
+    participants: 150,
+    status: "joining",
+    prize: "₹15,000",
+    entryFee: "₹300",
+    creator: "Sports X",
+    maxParticipants: 300
   }
 ];
 

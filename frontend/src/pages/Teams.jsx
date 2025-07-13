@@ -24,6 +24,9 @@ const Teams = () => {
     }
   };
 
+  // Fix: Calculate budget percentage properly and cap at 100%
+  const budgetPercentage = Math.min((selectedTeam.spent / selectedTeam.budget) * 100, 100);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
@@ -76,8 +79,8 @@ const Teams = () => {
                 {selectedTeam.avatar}
               </div>
               <div>
-                <h2 className="text-xl font-bold">{selectedTeam.name}</h2>
-                <p className="text-sm text-gray-600">Owned by {selectedTeam.owner}</p>
+                <h2 className="text-xl font-bold text-white">{selectedTeam.name}</h2>
+                <p className="text-sm text-white/80">Owned by {selectedTeam.owner}</p>
               </div>
             </CardTitle>
           </CardHeader>
@@ -99,19 +102,19 @@ const Teams = () => {
               </div>
             </div>
             
-            {/* Budget Bar */}
+            {/* Fixed Budget Bar */}
             <div className="mt-4">
               <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span>Budget Utilized</span>
-                <span>{Math.round((selectedTeam.spent / selectedTeam.budget) * 100)}%</span>
+                <span className="text-white">Budget Utilized</span>
+                <span className="text-white">{Math.round(budgetPercentage)}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
                 <div 
-                  className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(selectedTeam.spent / selectedTeam.budget) * 100}%` }}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${budgetPercentage}%` }}
                 ></div>
               </div>
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-white/80 mt-2">
                 <span>{formatCurrency(selectedTeam.spent)} spent</span>
                 <span>{formatCurrency(selectedTeam.budget)} total</span>
               </div>
@@ -147,7 +150,7 @@ const Teams = () => {
         {/* Squad */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between text-white">
               <span>Squad Players</span>
               <Badge variant="outline" className="border-blue-200 text-blue-600">
                 {teamPlayers.length} Players
@@ -198,30 +201,39 @@ const Teams = () => {
         {/* Team Performance */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle>Recent Performance</CardTitle>
+            <CardTitle className="text-white">Team Performance</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="space-y-3">
-              {[
-                { match: 'vs Thunderbolts', result: 'Won', points: '+150', date: '2 days ago' },
-                { match: 'vs Storm Kings', result: 'Lost', points: '-75', date: '5 days ago' },
-                { match: 'vs Fire Dragons', result: 'Won', points: '+200', date: '1 week ago' },
-              ].map((game, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{game.match}</p>
-                    <p className="text-sm text-gray-600">{game.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <Badge className={game.result === 'Won' ? 'bg-green-500' : 'bg-red-500'}>
-                      {game.result}
-                    </Badge>
-                    <p className={`text-sm font-medium ${game.result === 'Won' ? 'text-green-600' : 'text-red-600'}`}>
-                      {game.points} pts
-                    </p>
-                  </div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Recent Form</span>
+                <div className="flex space-x-1">
+                  <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
+                  <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
+                  <div className="w-6 h-6 bg-red-500 rounded text-white text-xs flex items-center justify-center">L</div>
+                  <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
+                  <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
                 </div>
-              ))}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Matches Played:</span>
+                  <span className="font-medium">15</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Matches Won:</span>
+                  <span className="font-medium text-green-600">10</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">League Position:</span>
+                  <span className="font-medium">#2</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Points:</span>
+                  <span className="font-medium text-blue-600">2,450</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
