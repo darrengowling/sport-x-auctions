@@ -1,274 +1,343 @@
 import React, { useState } from 'react';
-import { Plus, Search, Trophy, Users, Clock, Copy, Share2, Lock, Globe, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Plus, Search, Filter, Trophy, Users, Clock, Star, 
+  Lock, Globe, ArrowRight, Crown, Target 
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { useToast } from '../hooks/use-toast';
+import CreateLeagueModal from '../components/CreateLeagueModal';
 import { mockLeagues, formatCurrency } from '../data/mock';
 
 const Leagues = () => {
-  const [activeTab, setActiveTab] = useState('joined');
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const { toast } = useToast();
-
-  const copyLeagueCode = (code) => {
-    navigator.clipboard.writeText(code);
-    toast({
-      title: "Code Copied! 📋",
-      description: `League code ${code} copied to clipboard`,
-    });
-  };
-
-  const joinLeague = (league) => {
-    toast({
-      title: "League Joined! 🎉",
-      description: `Welcome to ${league.name}`,
-    });
-  };
-
-  const getLeagueIcon = (type) => {
-    return type === 'private' ? <Lock size={16} /> : <Globe size={16} />;
-  };
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [leagues, setLeagues] = useState(mockLeagues);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'active': return 'bg-green-500 text-white';
       case 'joining': return 'bg-blue-500 text-white';
-      case 'upcoming': return 'bg-orange-500 text-white';
       case 'completed': return 'bg-gray-500 text-white';
       default: return 'bg-gray-500 text-white';
     }
   };
 
-  const filteredLeagues = mockLeagues.filter(league => {
-    const matchesSearch = league.name.toLowerCase().includes(searchTerm.toLowerCase());
-    if (activeTab === 'joined') {
-      return matchesSearch && (league.creator === 'You' || league.name.includes('Friends'));
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'active': return '🏏';
+      case 'joining': return '👥';
+      case 'completed': return '🏆';
+      default: return '📅';
     }
-    return matchesSearch;
+  };
+
+  const getTypeIcon = (type) => {
+    return type === 'private' ? <Lock size={14} /> : <Globe size={14} />;
+  };
+
+  const filteredLeagues = leagues.filter(league => {
+    const matchesSearch = league.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = selectedFilter === 'all' || 
+                         (selectedFilter === 'my-leagues' && league.creator === 'You') ||
+                         (selectedFilter === 'public' && league.type === 'public') ||
+                         (selectedFilter === 'private' && league.type === 'private');
+    return matchesSearch && matchesFilter;
   });
 
+  const handleCreateLeague = (newLeague) => {
+    setLeagues([newLeague, ...leagues]);
+  };
+
+  const handleJoinLeague = (leagueId) => {
+    setLeagues(leagues.map(league => 
+      league.id === leagueId 
+        ? { ...league, participants: league.participants + 1 }
+        : league
+    ));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 pb-6">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 pb-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">Leagues</h1>
           <Button 
-            size="sm"
+            onClick={() => setShowCreateModal(true)}
             className="bg-white text-purple-600 hover:bg-gray-100"
+            size="sm"
           >
-            <Plus size={16} className="mr-1" />
+            <Plus size={16} className="mr-2" />
             Create League
           </Button>
         </div>
-
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-          <Input
-            placeholder="Search leagues..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-white/20 border-white/30 text-white placeholder-white/70"
-          />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-white/20 rounded-lg p-1">
-          {['joined', 'discover'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab 
-                  ? 'bg-white text-purple-600 shadow-sm' 
-                  : 'text-white hover:bg-white/20'
-              }`}
-            >
-              {tab === 'joined' ? 'My Leagues' : 'Discover'}
-            </button>
-          ))}
+        
+        {/* Search and Filter */}
+        <div className="space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Input
+              placeholder="Search leagues..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/20 border-white/30 text-white placeholder-white/70"
+            />
+          </div>
+          
+          <div className="flex space-x-2 overflow-x-auto pb-2">
+            {[
+              { key: 'all', label: 'All Leagues' },
+              { key: 'my-leagues', label: 'My Leagues' },
+              { key: 'public', label: 'Public' },
+              { key: 'private', label: 'Private' }
+            ].map(filter => (
+              <Button
+                key={filter.key}
+                variant={selectedFilter === filter.key ? 'secondary' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFilter(filter.key)}
+                className={`flex-shrink-0 ${
+                  selectedFilter === filter.key 
+                    ? 'bg-white text-purple-600' 
+                    : 'text-white hover:bg-white/20'
+                }`}
+              >
+                {filter.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 -mt-2">
-        {/* Featured League */}
-        {activeTab === 'discover' && (
-          <Card className="shadow-xl bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <Star className="text-white" size={24} />
-                  </div>
-                  <div>
-                    <Badge className="bg-yellow-500 text-white mb-2">
-                      ⭐ FEATURED
-                    </Badge>
-                    <h3 className="text-xl font-bold text-gray-900">Global Masters</h3>
-                    <p className="text-gray-600">The ultimate cricket championship</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="text-center p-3 bg-white rounded-lg shadow-sm">
-                  <p className="text-sm text-gray-600">Prize Pool</p>
-                  <p className="text-lg font-bold text-green-600">₹10,00,000</p>
-                </div>
-                <div className="text-center p-3 bg-white rounded-lg shadow-sm">
-                  <p className="text-sm text-gray-600">Participants</p>
-                  <p className="text-lg font-bold text-blue-600">500/1000</p>
-                </div>
-              </div>
-
-              <Button 
-                onClick={() => joinLeague(mockLeagues[2])}
-                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold"
-              >
-                Join for ₹5,000
-              </Button>
+      <div className="p-4 space-y-6 -mt-2 pb-6">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <Card className="shadow-md">
+            <CardContent className="p-4 text-center">
+              <Trophy className="text-gold-500 mx-auto mb-2" size={20} />
+              <p className="text-xs text-gray-600">Leagues Won</p>
+              <p className="font-bold text-gold-600">3</p>
             </CardContent>
           </Card>
-        )}
-
-        {/* League List */}
-        <div className="space-y-4">
-          {filteredLeagues.map((league) => (
-            <Card 
-              key={league.id} 
-              className="shadow-lg hover:shadow-xl transition-shadow bg-white"
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-bold text-gray-900 text-lg">{league.name}</h3>
-                      <div className="flex items-center space-x-1">
-                        {getLeagueIcon(league.type)}
-                        <span className="text-xs text-gray-500 capitalize">{league.type}</span>
-                      </div>
-                    </div>
-                    
-                    {league.description && (
-                      <p className="text-sm text-gray-600 mb-2">{league.description}</p>
-                    )}
-                    
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <div className="flex items-center space-x-1">
-                        <Users size={14} />
-                        <span>{league.participants} {league.maxParticipants ? `/ ${league.maxParticipants}` : ''} teams</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Trophy size={14} />
-                        <span>{league.prize}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Badge className={getStatusColor(league.status)}>
-                    {league.status.toUpperCase()}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <p className="text-xs text-gray-600">Prize Pool</p>
-                    <p className="font-bold text-green-600">{league.prize}</p>
-                  </div>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-xs text-gray-600">Entry Fee</p>
-                    <p className="font-bold text-blue-600">{league.entryFee}</p>
-                  </div>
-                </div>
-
-                {/* League Code for Private Leagues */}
-                {league.type === 'private' && league.code && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-gray-600">League Code</p>
-                        <p className="font-mono font-bold text-gray-900">{league.code}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => copyLeagueCode(league.code)}
-                          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-                        >
-                          <Copy size={16} />
-                        </button>
-                        <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors">
-                          <Share2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex space-x-2">
-                  {league.creator === 'You' ? (
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50"
-                    >
-                      Manage League
-                    </Button>
-                  ) : league.status === 'joining' ? (
-                    <Button 
-                      onClick={() => joinLeague(league)}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-                    >
-                      Join League
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 border-gray-200 text-gray-600"
-                    >
-                      View Details
-                    </Button>
-                  )}
-                  
-                  {league.status === 'active' && (
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      className="border-green-200 text-green-600 hover:bg-green-50"
-                    >
-                      <Trophy size={16} />
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          <Card className="shadow-md">
+            <CardContent className="p-4 text-center">
+              <Crown className="text-purple-500 mx-auto mb-2" size={20} />
+              <p className="text-xs text-gray-600">Active Leagues</p>
+              <p className="font-bold text-purple-600">2</p>
+            </CardContent>
+          </Card>
+          <Card className="shadow-md">
+            <CardContent className="p-4 text-center">
+              <Target className="text-blue-500 mx-auto mb-2" size={20} />
+              <p className="text-xs text-gray-600">Win Rate</p>
+              <p className="font-bold text-blue-600">75%</p>
+            </CardContent>
+          </Card>
         </div>
 
-        {filteredLeagues.length === 0 && (
-          <Card className="shadow-lg">
-            <CardContent className="p-8 text-center">
-              <div className="text-gray-400 mb-4">
-                <Trophy size={48} className="mx-auto mb-2" />
-                <h3 className="text-lg font-medium text-gray-900">No leagues found</h3>
-                <p className="text-sm">
-                  {activeTab === 'joined' 
-                    ? "You haven't joined any leagues yet" 
-                    : "Try adjusting your search criteria"
+        {/* Featured League */}
+        <Card className="shadow-lg border-2 border-gold-300 bg-gradient-to-r from-gold-50 to-yellow-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <Badge className="bg-gold-500 text-white">
+                🏆 Featured
+              </Badge>
+              <Badge variant="outline" className="border-gold-400 text-gold-700">
+                ₹10,00,000 Prize
+              </Badge>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Global Masters Championship</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              The ultimate cricket fantasy league with massive prizes and international competition.
+            </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <span className="flex items-center">
+                  <Users size={14} className="mr-1" />
+                  500/1000
+                </span>
+                <span className="flex items-center">
+                  <Globe size={14} className="mr-1" />
+                  Public
+                </span>
+              </div>
+              <Button 
+                onClick={() => handleJoinLeague(3)}
+                className="bg-gold-500 hover:bg-gold-600 text-white"
+                size="sm"
+              >
+                Join League
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Leagues List */}
+        <div className="space-y-4">
+          {filteredLeagues.length > 0 ? (
+            filteredLeagues.map((league) => (
+              <Card 
+                key={league.id} 
+                className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+                onClick={() => navigate(`/league/${league.id}`)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-bold text-gray-900">{league.name}</h3>
+                        {getTypeIcon(league.type)}
+                        <Badge 
+                          className={`${getStatusColor(league.status)} text-xs`}
+                        >
+                          {getStatusIcon(league.status)} {league.status}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 mb-2">{league.description}</p>
+                      
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span>Created by {league.creator}</span>
+                        {league.code && (
+                          <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                            Code: {league.code}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="text-right ml-4">
+                      <p className="text-sm font-medium text-green-600">{league.prize}</p>
+                      <p className="text-xs text-gray-500">{league.entryFee} entry</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <span className="flex items-center">
+                        <Users size={14} className="mr-1" />
+                        {league.participants}/{league.maxParticipants || '∞'}
+                      </span>
+                      <span className="flex items-center">
+                        <Clock size={14} className="mr-1" />
+                        {league.status === 'joining' ? 'Open for registration' : 'In progress'}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      {league.creator !== 'You' && league.status === 'joining' && (
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleJoinLeague(league.id);
+                          }}
+                          size="sm"
+                          className="bg-blue-500 hover:bg-blue-600 text-white"
+                        >
+                          Join
+                        </Button>
+                      )}
+                      <ArrowRight size={16} className="text-gray-400" />
+                    </div>
+                  </div>
+                  
+                  {/* Progress Bar for Participants */}
+                  {league.maxParticipants && (
+                    <div className="mt-3">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ 
+                            width: `${(league.participants / league.maxParticipants) * 100}%` 
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card className="shadow-lg">
+              <CardContent className="p-8 text-center">
+                <Trophy className="mx-auto text-gray-400 mb-4" size={48} />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Leagues Found</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  {searchTerm 
+                    ? `No leagues match "${searchTerm}"`
+                    : 'Create your first league or browse available ones'
                   }
                 </p>
-              </div>
-              <Button className="bg-purple-500 hover:bg-purple-600 text-white">
-                <Plus size={16} className="mr-1" />
-                Create Your First League
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                <Button 
+                  onClick={() => setShowCreateModal(true)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  <Plus size={16} className="mr-2" />
+                  Create League
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* My Active Leagues */}
+        <Card className="shadow-lg">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center space-x-2">
+              <Star className="text-yellow-500" size={20} />
+              <span>My Active Leagues</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {leagues.filter(league => league.creator === 'You' && league.status === 'active').map((league) => (
+                <div 
+                  key={league.id}
+                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
+                  onClick={() => navigate(`/league/${league.id}`)}
+                >
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{league.name}</h4>
+                    <p className="text-sm text-gray-500">
+                      {league.participants} participants • {league.prize}
+                    </p>
+                  </div>
+                  <Badge className="bg-green-500 text-white">
+                    Active
+                  </Badge>
+                </div>
+              ))}
+              
+              {leagues.filter(league => league.creator === 'You' && league.status === 'active').length === 0 && (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 text-sm">No active leagues</p>
+                  <Button 
+                    onClick={() => setShowCreateModal(true)}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Create Your First League
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Create League Modal */}
+      <CreateLeagueModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreateLeague={handleCreateLeague}
+      />
     </div>
   );
 };
