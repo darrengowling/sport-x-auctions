@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Gavel, Users, Trophy, User, Info } from 'lucide-react';
+import AuthButtons from './auth/AuthButtons';
 
 const Navigation = () => {
   const location = useLocation();
