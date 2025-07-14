@@ -113,13 +113,16 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        onClick={handleBackgroundClick}
+      >
         <div className="bg-white rounded-2xl p-6 w-full max-w-md relative max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-slate-900">Create Account</h2>
             <button 
-              onClick={onClose}
+              onClick={handleClose}
               className="text-slate-400 hover:text-slate-600 transition-colors"
             >
               <X className="w-6 h-6" />
