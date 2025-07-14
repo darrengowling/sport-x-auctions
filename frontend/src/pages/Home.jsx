@@ -69,11 +69,11 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold">Welcome back! 🏏</h1>
-            <p className="text-blue-100 opacity-90">Ready to dominate the auctions?</p>
+            <h1 className="text-3xl font-bold">Welcome back! 🏏</h1>
+            <p className="text-blue-100 opacity-90 text-lg mt-2">Ready to dominate the auctions?</p>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -96,10 +96,18 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Welcome Message */}
+        {/* User Stats */}
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-          <h2 className="text-lg font-semibold mb-1">Welcome back, {user.name}! 🏏</h2>
-          <p className="text-blue-100 text-sm">Ready to outbid the ordinary? No bets. No chance.</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold mb-1">{user.name}</h2>
+              <p className="text-blue-100 text-sm">Your cricket empire awaits. No bets. No chance.</p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-bold">{user.winRate}%</p>
+              <p className="text-blue-200 text-sm">Win Rate</p>
+            </div>
+          </div>
         </div>
       </div>
 
