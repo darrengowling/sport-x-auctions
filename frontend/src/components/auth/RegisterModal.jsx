@@ -312,6 +312,16 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               Sign in
             </button>
           </div>
+
+          {/* Skip Option */}
+          <div className="text-center mt-4 pt-4 border-t border-slate-200">
+            <button
+              onClick={handleClose}
+              className="text-slate-500 hover:text-slate-700 text-sm"
+            >
+              Skip for now
+            </button>
+          </div>
         </div>
       </div>
 
