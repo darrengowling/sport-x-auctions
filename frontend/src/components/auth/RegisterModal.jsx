@@ -29,6 +29,28 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
   if (!isOpen) return null;
 
+  // Allow users to close modal without registration
+  const handleClose = () => {
+    setError('');
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      favoriteTeam: '',
+      agreeToTerms: false
+    });
+    onClose();
+  };
+
+  // Handle background click to close modal
+  const handleBackgroundClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,7 +80,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const result = await register(userData, 'email');
     
     if (result.success) {
-      onClose();
+      handleClose();
     } else {
       setError(result.error);
     }
@@ -72,7 +94,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const { login } = useAuth();
     const result = await login(userData, provider);
     if (result.success) {
-      onClose();
+      handleClose();
     } else {
       setError(result.error);
     }
