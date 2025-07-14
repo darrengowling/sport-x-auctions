@@ -132,7 +132,7 @@ const Auctions = () => {
                 <div 
                   key={player.id} 
                   className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/auction/${player.id}`)}
+                  onClick={() => navigate(`/auction/1`)} // Navigate to auction room for bidding
                 >
                   <img 
                     src={player.image} 
