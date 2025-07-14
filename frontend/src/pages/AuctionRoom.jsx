@@ -1,425 +1,435 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Clock, Gavel, Heart, Share2, Plus, Minus, Trophy } from 'lucide-react';
-import { Card, CardContent } from '../components/ui/card';
+import { 
+  Clock, Users, MessageCircle, Send, Gavel, TrendingUp, 
+  Crown, Timer, AlertCircle, Zap, Eye, User 
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { useToast } from '../hooks/use-toast';
-import ApiService from '../services/api';
+import { useAuction } from '../contexts/AuctionContext';
+import { formatCurrency } from '../data/mock';
 
 const AuctionRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [timeLeft, setTimeLeft] = useState(45);
-  const [bidAmount, setBidAmount] = useState('');
-  const [userBid, setUserBid] = useState(0);
-  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  const [auction, setAuction] = useState(null);
-  const [players, setPlayers] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    currentAuction,
+    currentPlayer,
+    bidHistory,
+    participants,
+    timeRemaining,
+    totalTimeLeft,
+    isConnected,
+    chatMessages,
+    newBidAlert,
+    connectToAuction,
+    disconnectFromAuction,
+    placeBid,
+    sendChatMessage,
+    getMaxBid,
+    getNextBidAmount,
+    canBid
+  } = useAuction();
+
+  const [chatInput, setChatInput] = useState('');
+  const [showChat, setShowChat] = useState(true);
+  const [customBidAmount, setCustomBidAmount] = useState('');
+  const chatEndRef = useRef(null);
+  const alertAudioRef = useRef(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [auctionData, playersData, teamsData] = await Promise.all([
-          ApiService.getAuction(id),
-          ApiService.getPlayers(),
-          ApiService.getTeams()
-        ]);
-        
-        setAuction(auctionData);
-        setPlayers(playersData);
-        setTeams(teamsData);
-      } catch (error) {
-        console.error('Error fetching auction data:', error);
-        setError('Auction not found');
-      } finally {
-        setLoading(false);
-      }
+    // Connect to auction when component mounts
+    connectToAuction(id);
+    
+    return () => {
+      // Disconnect when component unmounts
+      disconnectFromAuction();
     };
-
-    if (id) {
-      fetchData();
-    }
   }, [id]);
 
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      // Move to next player when time runs out
-      if (currentPlayerIndex < players.length - 1) {
-        setCurrentPlayerIndex(currentPlayerIndex + 1);
-        setTimeLeft(60);
-        setUserBid(0);
-        setBidAmount('');
-      }
-    }
-  }, [timeLeft, currentPlayerIndex, players.length]);
+    // Scroll chat to bottom when new messages arrive
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
-  const handleBid = async () => {
-    const bid = parseInt(bidAmount);
-    const currentPlayer = players[currentPlayerIndex];
-    
-    if (!currentPlayer) {
-      toast({
-        title: "Error",
-        description: "No player selected for bidding",
-        variant: "destructive"
+  useEffect(() => {
+    // Play alert sound for new bids
+    if (newBidAlert && alertAudioRef.current) {
+      alertAudioRef.current.play().catch(() => {
+        // Audio play failed, ignore
       });
-      return;
     }
+  }, [newBidAlert]);
 
-    if (!bid || bid <= currentPlayer.current_bid) {
-      toast({
-        title: "Invalid Bid",
-        description: "Bid must be higher than current bid",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const userTeam = teams.find(team => team.owner_name === "Cricket Fan");
-    if (userTeam && bid > userTeam.remaining) {
-      toast({
-        title: "Insufficient Budget",
-        description: "You don't have enough budget for this bid",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      await ApiService.placeBid(currentPlayer.id, bid, "Your Team");
-      setUserBid(bid);
-      toast({
-        title: "Bid Placed! 🎯",
-        description: `You bid ${ApiService.formatCurrency(bid)} for ${currentPlayer.name}`,
-      });
-      setBidAmount('');
-      
-      // Update local player data
-      const updatedPlayers = [...players];
-      updatedPlayers[currentPlayerIndex].current_bid = bid;
-      setPlayers(updatedPlayers);
-    } catch (error) {
-      toast({
-        title: "Bid Failed",
-        description: error.response?.data?.detail || "Failed to place bid",
-        variant: "destructive"
-      });
+  const handleQuickBid = () => {
+    const nextBid = getNextBidAmount();
+    if (canBid(nextBid)) {
+      placeBid(nextBid);
     }
   };
 
-  const quickBidAmounts = [100000, 500000, 1000000, 2000000];
+  const handleCustomBid = () => {
+    const amount = parseInt(customBidAmount) * 1000000; // Convert millions to actual amount
+    if (canBid(amount)) {
+      placeBid(amount);
+      setCustomBidAmount('');
+    }
+  };
 
-  if (loading) {
+  const handleChatSend = () => {
+    if (chatInput.trim()) {
+      sendChatMessage(chatInput);
+      setChatInput('');
+    }
+  };
+
+  const getTimerColor = () => {
+    if (timeRemaining <= 3) return 'text-red-500';
+    if (timeRemaining <= 5) return 'text-orange-500';
+    return 'text-green-500';
+  };
+
+  const getTotalTimerColor = () => {
+    if (totalTimeLeft <= 10) return 'text-red-500';
+    if (totalTimeLeft <= 20) return 'text-orange-500';
+    return 'text-blue-500';
+  };
+
+  if (!isConnected || !currentPlayer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center pb-20">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white">Loading auction...</p>
+          <p className="text-white text-lg">Connecting to auction room...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !auction) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
-        <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4">
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => navigate('/auctions')}
-              className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <h1 className="text-lg font-bold">Auction Not Found</h1>
-          </div>
-        </div>
-        
-        <div className="p-4 flex-1 flex items-center justify-center">
-          <Card className="shadow-lg max-w-md w-full">
-            <CardContent className="p-8 text-center">
-              <div className="text-gray-400 mb-4">
-                <Gavel size={48} className="mx-auto mb-2" />
-                <h3 className="text-lg font-medium text-gray-900">Auction Not Available</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  The auction you're looking for doesn't exist or has ended.
-                </p>
-                <Button 
-                  onClick={() => navigate('/auctions')}
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                  View Available Auctions
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  const currentPlayer = players[currentPlayerIndex];
-  const userTeam = teams.find(team => team.owner_name === "Cricket Fan") || teams[0];
-
-  if (!currentPlayer) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => navigate('/auctions')}
-              className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <h1 className="text-lg font-bold">Auction Complete</h1>
-          </div>
-        </div>
-        
-        <div className="p-4 flex-1 flex items-center justify-center">
-          <Card className="shadow-lg max-w-md w-full">
-            <CardContent className="p-8 text-center">
-              <div className="text-gray-400 mb-4">
-                <Trophy size={48} className="mx-auto mb-2" />
-                <h3 className="text-lg font-medium text-gray-900">Auction Complete!</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  All players have been auctioned. Check your team!
-                </p>
-                <Button 
-                  onClick={() => navigate('/teams')}
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  View My Team
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  const userParticipant = participants.find(p => p.name === "You");
+  const nextBidAmount = getNextBidAmount();
+  const maxBid = getMaxBid();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+      {/* Audio for bid alerts */}
+      <audio ref={alertAudioRef} preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSEFl" type="audio/wav" />
+      </audio>
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4">
-        <div className="flex items-center space-x-3 mb-4">
-          <button 
+      <div className="bg-gradient-to-r from-red-600 to-purple-600 text-white p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center">
+              <Gavel className="mr-2" size={24} />
+              {currentAuction?.name}
+            </h1>
+            <p className="text-red-100 opacity-90">Live Auction Room</p>
+          </div>
+          
+          <Button
             onClick={() => navigate('/auctions')}
-            className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+            variant="outline"
+            className="border-white/30 text-white hover:bg-white/10"
           >
-            <ArrowLeft size={20} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-lg font-bold">{auction.name}</h1>
-            <div className="flex items-center space-x-4 text-sm text-red-100">
-              <div className="flex items-center space-x-1">
-                <Users size={14} />
-                <span>{auction.participants?.length || 0} teams</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span>LIVE</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex space-x-2">
-            <button className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
-              <Heart size={18} />
-            </button>
-            <button className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
-              <Share2 size={18} />
-            </button>
-          </div>
+            Leave Auction
+          </Button>
         </div>
 
-        {/* Timer */}
-        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold">Time Remaining</h3>
-              <p className="text-red-100 text-sm">Current bidding round</p>
+        {/* Timers */}
+        <div className="grid grid-cols-2 gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+          <div className="text-center">
+            <div className={`text-3xl font-bold ${getTimerColor()}`}>
+              {timeRemaining}s
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold">{timeLeft}s</div>
-              <div className="w-16 h-2 bg-white/30 rounded-full mt-1">
-                <div 
-                  className="h-full bg-white rounded-full transition-all duration-1000"
-                  style={{ width: `${(timeLeft / 60) * 100}%` }}
-                ></div>
-              </div>
+            <p className="text-white/80 text-sm">Bid Timer</p>
+          </div>
+          <div className="text-center">
+            <div className={`text-3xl font-bold ${getTotalTimerColor()}`}>
+              {Math.floor(totalTimeLeft / 60)}:{(totalTimeLeft % 60).toString().padStart(2, '0')}
             </div>
+            <p className="text-white/80 text-sm">Total Time</p>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4 -mt-2 pb-6">
-        {/* Current Player */}
-        <Card className="shadow-xl bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200">
-          <CardContent className="p-6">
-            <div className="text-center mb-6">
-              <Badge className="bg-red-500 text-white mb-3">
-                🔴 NOW BIDDING
-              </Badge>
-              <img 
-                src={currentPlayer.image_url} 
-                alt={currentPlayer.name}
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-blue-200 shadow-lg"
-              />
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">{currentPlayer.name}</h2>
-              <p className="text-gray-600">{currentPlayer.team} • {currentPlayer.role}</p>
-            </div>
+      {/* New Bid Alert */}
+      {newBidAlert && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-pulse">
+          <div className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg border-2 border-green-300">
+            <p className="font-bold">
+              🎯 New Bid: {newBidAlert.bidder} - {formatCurrency(newBidAlert.amount)}
+            </p>
+          </div>
+        </div>
+      )}
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <p className="text-sm text-gray-600">Base Price</p>
-                <p className="text-lg font-bold text-green-600">{ApiService.formatCurrency(currentPlayer.base_price)}</p>
-              </div>
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600">Current Bid</p>
-                <p className="text-lg font-bold text-blue-600">{ApiService.formatCurrency(currentPlayer.current_bid)}</p>
-              </div>
-            </div>
-
-            {/* Player Stats */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Performance Stats</h4>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Matches:</span>
-                  <span className="font-medium">{currentPlayer.stats?.matches || 0}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4">
+        {/* Main Auction Area */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Current Player */}
+          <Card className="shadow-xl border-2 border-yellow-300">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-6 mb-6">
+                <img 
+                  src={currentPlayer.image} 
+                  alt={currentPlayer.name}
+                  className="w-24 h-24 rounded-full object-cover border-4 border-yellow-400"
+                />
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-gray-900">{currentPlayer.name}</h2>
+                  <p className="text-lg text-gray-600">{currentPlayer.team} • {currentPlayer.role}</p>
+                  <div className="mt-2">
+                    <Badge className="bg-yellow-500 text-white">
+                      Base Price: {formatCurrency(currentPlayer.basePrice)}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Strike Rate:</span>
-                  <span className="font-medium">{currentPlayer.stats?.strike_rate || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Runs:</span>
-                  <span className="font-medium">{currentPlayer.stats?.runs || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Average:</span>
-                  <span className="font-medium">{currentPlayer.stats?.average || 0}</span>
+                <div className="text-right">
+                  <p className="text-sm text-gray-600">Current Bid</p>
+                  <p className="text-4xl font-bold text-green-600">
+                    {formatCurrency(currentPlayer.currentBid)}
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* Active Bidders */}
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-900 mb-2">Active Bidders</h4>
-              <div className="flex flex-wrap gap-2">
-                {currentPlayer.bidders?.map((bidder, index) => (
-                  <Badge key={index} variant="outline" className="border-blue-200 text-blue-600">
-                    {bidder}
-                  </Badge>
-                ))}
-                {userBid > 0 && (
-                  <Badge className="bg-green-500 text-white">
-                    You (Leading)
-                  </Badge>
+              {/* Player Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 rounded-xl p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">{currentPlayer.stats.matches}</p>
+                  <p className="text-sm text-gray-600">Matches</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{currentPlayer.stats.runs || currentPlayer.stats.wickets}</p>
+                  <p className="text-sm text-gray-600">{currentPlayer.role === 'Bowler' ? 'Wickets' : 'Runs'}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-purple-600">{currentPlayer.stats.average}</p>
+                  <p className="text-sm text-gray-600">Average</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-orange-600">{currentPlayer.stats.strikeRate}</p>
+                  <p className="text-sm text-gray-600">Strike Rate</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bidding Controls */}
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Gavel className="text-blue-500" size={20} />
+                <span>Place Your Bid</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {userParticipant && (
+                <div className="bg-blue-50 rounded-xl p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Your Remaining Budget:</span>
+                    <span className="text-lg font-bold text-blue-600">
+                      {formatCurrency(userParticipant.remaining)}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Bid Button */}
+              <div className="space-y-3">
+                <Button
+                  onClick={handleQuickBid}
+                  disabled={!canBid(nextBidAmount)}
+                  className={`w-full h-16 text-xl font-bold ${
+                    canBid(nextBidAmount) 
+                      ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse' 
+                      : 'bg-gray-300 text-gray-500'
+                  }`}
+                >
+                  <Zap className="mr-2" size={24} />
+                  Quick Bid: {formatCurrency(nextBidAmount)}
+                </Button>
+
+                {/* Custom Bid */}
+                <div className="flex space-x-2">
+                  <div className="flex-1 relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">£</span>
+                    <Input
+                      type="number"
+                      placeholder="Amount in millions"
+                      value={customBidAmount}
+                      onChange={(e) => setCustomBidAmount(e.target.value)}
+                      className="pl-8"
+                    />
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">M</span>
+                  </div>
+                  <Button
+                    onClick={handleCustomBid}
+                    disabled={!customBidAmount || !canBid(parseInt(customBidAmount) * 1000000)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    Bid
+                  </Button>
+                </div>
+
+                {!canBid(nextBidAmount) && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                    <div className="flex items-center space-x-2 text-red-700">
+                      <AlertCircle size={16} />
+                      <span className="text-sm">
+                        {userParticipant?.remaining < nextBidAmount 
+                          ? 'Insufficient budget for next bid' 
+                          : 'Bidding not available'
+                        }
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Bidding Interface */}
-        <Card className="shadow-lg">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-4">Place Your Bid</h3>
-            
-            {/* Custom Bid */}
-            <div className="flex space-x-2 mb-4">
-              <div className="flex-1 relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
-                <Input
-                  type="number"
-                  placeholder="Enter bid amount"
-                  value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-              <Button 
-                onClick={handleBid}
-                disabled={!bidAmount || parseInt(bidAmount) <= currentPlayer.current_bid}
-                className="bg-green-500 hover:bg-green-600 text-white px-6"
-              >
-                <Gavel size={16} className="mr-1" />
-                Bid
-              </Button>
-            </div>
-
-            {/* Quick Bid Buttons */}
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {quickBidAmounts.map((amount) => (
-                <Button
-                  key={amount}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setBidAmount((currentPlayer.current_bid + amount).toString())}
-                  className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                >
-                  +{ApiService.formatCurrency(amount)}
-                </Button>
-              ))}
-            </div>
-
-            {/* Team Budget */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-700">Remaining Budget:</span>
-                <span className="font-bold text-yellow-600">{ApiService.formatCurrency(userTeam.remaining)}</span>
-              </div>
-              <div className="w-full bg-yellow-200 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(userTeam.remaining / userTeam.budget) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Participants */}
-        <Card className="shadow-lg">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Participating Teams</h3>
-            <div className="space-y-2">
-              {teams.slice(0, 3).map((team) => (
-                <div key={team.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div 
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                      style={{ backgroundColor: team.color, color: 'white' }}
-                    >
-                      {team.avatar}
+          {/* Bid History */}
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <TrendingUp className="text-green-500" size={20} />
+                <span>Bid History</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="max-h-64 overflow-y-auto">
+              <div className="space-y-3">
+                {bidHistory.map((bid) => (
+                  <div key={bid.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        {bid.bidder.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">{bid.bidder}</p>
+                        <p className="text-sm text-gray-500">{bid.team}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{team.name}</p>
-                      <p className="text-xs text-gray-500">{team.owner_name}</p>
+                    <div className="text-right">
+                      <p className="font-bold text-green-600">{formatCurrency(bid.amount)}</p>
+                      <p className="text-xs text-gray-500">
+                        {bid.timestamp.toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{ApiService.formatCurrency(team.remaining)}</p>
-                    <p className="text-xs text-gray-500">{team.players?.length || 0}/{team.max_players} players</p>
-                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Participants */}
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Users className="text-blue-500" size={20} />
+                  <span>Participants ({participants.length})</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <Badge variant="outline" className="border-green-200 text-green-600">
+                  {participants.filter(p => p.isOnline).length} Online
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="max-h-64 overflow-y-auto">
+              <div className="space-y-2">
+                {participants.map((participant) => (
+                  <div key={participant.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="relative">
+                        <span className="text-xl">{participant.avatar}</span>
+                        <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${
+                          participant.isOnline ? 'bg-green-400' : 'bg-gray-400'
+                        }`}></div>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">
+                          {participant.name}
+                          {participant.name === "You" && <Crown className="inline ml-1 w-3 h-3 text-yellow-500" />}
+                        </p>
+                        <p className="text-xs text-gray-500">{participant.team}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-medium text-green-600">
+                        {formatCurrency(participant.remaining)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Live Chat */}
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <MessageCircle className="text-purple-500" size={20} />
+                  <span>Live Chat</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowChat(!showChat)}
+                >
+                  <Eye size={16} />
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            {showChat && (
+              <CardContent className="space-y-4">
+                <div className="h-48 overflow-y-auto bg-gray-50 rounded-lg p-3 space-y-2">
+                  {chatMessages.map((message) => (
+                    <div key={message.id} className={`flex items-start space-x-2 ${
+                      message.isOwn ? 'justify-end' : 'justify-start'
+                    }`}>
+                      <div className={`max-w-xs p-2 rounded-lg ${
+                        message.isOwn 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-white border border-gray-200'
+                      }`}>
+                        <p className="text-xs font-medium mb-1">
+                          {message.user}
+                        </p>
+                        <p className="text-sm">{message.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+                
+                <div className="flex space-x-2">
+                  <Input
+                    placeholder="Type a message..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleChatSend()}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={handleChatSend}
+                    disabled={!chatInput.trim()}
+                    className="bg-purple-500 hover:bg-purple-600 text-white"
+                  >
+                    <Send size={16} />
+                  </Button>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );
