@@ -23,6 +23,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
 
   if (!isOpen) return null;
 
+  // Allow users to close modal without authentication
+  const handleClose = () => {
+    setError('');
+    setFormData({ email: '', password: '' });
+    onClose();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -31,7 +38,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     const result = await login(formData, 'email');
     
     if (result.success) {
-      onClose();
+      handleClose();
     } else {
       setError(result.error);
     }
@@ -42,7 +49,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     setLoading(true);
     const result = await login({}, 'guest');
     if (result.success) {
-      onClose();
+      handleClose();
     } else {
       setError(result.error);
     }
@@ -53,7 +60,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     setLoading(true);
     const result = await login(userData, provider);
     if (result.success) {
-      onClose();
+      handleClose();
     } else {
       setError(result.error);
     }
@@ -67,15 +74,25 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     });
   };
 
+  // Handle background click to close modal
+  const handleBackgroundClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        onClick={handleBackgroundClick}
+      >
         <div className="bg-white rounded-2xl p-6 w-full max-w-md relative">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-slate-900">Welcome Back</h2>
             <button 
-              onClick={onClose}
+              onClick={handleClose}
               className="text-slate-400 hover:text-slate-600 transition-colors"
             >
               <X className="w-6 h-6" />
@@ -201,6 +218,16 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
               Sign up
             </button>
           </div>
+
+          {/* Skip Option */}
+          <div className="text-center mt-4 pt-4 border-t border-slate-200">
+            <button
+              onClick={handleClose}
+              className="text-slate-500 hover:text-slate-700 text-sm"
+            >
+              Skip for now
+            </button>
+          </div>
         </div>
       </div>
 
@@ -211,7 +238,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
           onClose={() => setShowPhoneModal(false)}
           onSuccess={() => {
             setShowPhoneModal(false);
-            onClose();
+            handleClose();
           }}
         />
       )}
