@@ -5,6 +5,7 @@ import axios from "axios";
 
 // Contexts
 import { AuthProvider } from "./contexts/AuthContext";
+import { AuctionProvider } from "./contexts/AuctionContext";
 
 // Components
 import Navigation from "./components/Navigation";
