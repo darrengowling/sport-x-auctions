@@ -120,9 +120,9 @@ const Leagues = () => {
         <div className="grid grid-cols-3 gap-4">
           <Card className="shadow-md">
             <CardContent className="p-4 text-center">
-              <Trophy className="text-gold-500 mx-auto mb-2" size={20} />
+              <Trophy className="text-yellow-500 mx-auto mb-2" size={20} />
               <p className="text-xs text-gray-600">Leagues Won</p>
-              <p className="font-bold text-gold-600">3</p>
+              <p className="font-bold text-yellow-600">3</p>
             </CardContent>
           </Card>
           <Card className="shadow-md">
@@ -142,22 +142,22 @@ const Leagues = () => {
         </div>
 
         {/* Featured League */}
-        <Card className="shadow-lg border-2 border-gold-300 bg-gradient-to-r from-gold-50 to-yellow-50">
+        <Card className="shadow-lg border-2 border-yellow-300 bg-gradient-to-r from-yellow-50 to-orange-50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <Badge className="bg-gold-500 text-white">
+              <Badge className="bg-yellow-500 text-white">
                 🏆 Featured
               </Badge>
-              <Badge variant="outline" className="border-gold-400 text-gold-700">
+              <Badge variant="outline" className="border-yellow-400 text-yellow-700">
                 ₹10,00,000 Prize
               </Badge>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">Global Masters Championship</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-sm text-gray-700 mb-3">
               The ultimate cricket fantasy league with massive prizes and international competition.
             </p>
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <div className="flex items-center space-x-4 text-sm text-gray-700">
                 <span className="flex items-center">
                   <Users size={14} className="mr-1" />
                   500/1000
@@ -169,7 +169,7 @@ const Leagues = () => {
               </div>
               <Button 
                 onClick={() => handleJoinLeague(3)}
-                className="bg-gold-500 hover:bg-gold-600 text-white"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white"
                 size="sm"
               >
                 Join League
@@ -200,9 +200,9 @@ const Leagues = () => {
                         </Badge>
                       </div>
                       
-                      <p className="text-sm text-gray-600 mb-2">{league.description}</p>
+                      <p className="text-sm text-gray-700 mb-2">{league.description}</p>
                       
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                      <div className="flex items-center space-x-4 text-xs text-gray-600">
                         <span>Created by {league.creator}</span>
                         {league.code && (
                           <span className="font-mono bg-gray-100 px-2 py-1 rounded">
@@ -214,12 +214,12 @@ const Leagues = () => {
                     
                     <div className="text-right ml-4">
                       <p className="text-sm font-medium text-green-600">{league.prize}</p>
-                      <p className="text-xs text-gray-500">{league.entryFee} entry</p>
+                      <p className="text-xs text-gray-600">{league.entryFee} entry</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center space-x-4 text-sm text-gray-700">
                       <span className="flex items-center">
                         <Users size={14} className="mr-1" />
                         {league.participants}/{league.maxParticipants || '∞'}
@@ -289,7 +289,7 @@ const Leagues = () => {
         {/* My Active Leagues */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
+            <CardTitle className="flex items-center space-x-2 text-gray-900">
               <Star className="text-yellow-500" size={20} />
               <span>My Active Leagues</span>
             </CardTitle>
@@ -304,7 +304,7 @@ const Leagues = () => {
                 >
                   <div>
                     <h4 className="font-semibold text-gray-900">{league.name}</h4>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-700">
                       {league.participants} participants • {league.prize}
                     </p>
                   </div>
@@ -316,7 +316,7 @@ const Leagues = () => {
               
               {leagues.filter(league => league.creator === 'You' && league.status === 'active').length === 0 && (
                 <div className="text-center py-4">
-                  <p className="text-gray-500 text-sm">No active leagues</p>
+                  <p className="text-gray-600 text-sm">No active leagues</p>
                   <Button 
                     onClick={() => setShowCreateModal(true)}
                     variant="outline"
