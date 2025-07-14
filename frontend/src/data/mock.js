@@ -176,8 +176,8 @@ export const mockLeagues = [
     type: "private",
     participants: 8,
     status: "active",
-    prize: "₹50,000",
-    entryFee: "₹1,000",
+    prize: "£50,000",
+    entryFee: "£1,000",
     creator: "You",
     code: "FRC2025",
     description: "Epic battle among friends for cricket supremacy!"
@@ -188,8 +188,8 @@ export const mockLeagues = [
     type: "private",
     participants: 12,
     status: "active",
-    prize: "₹1,00,000",
-    entryFee: "₹2,000",
+    prize: "£100,000",
+    entryFee: "£2,000",
     creator: "Rahul Mehta",
     code: "OFF2025"
   },
@@ -199,8 +199,8 @@ export const mockLeagues = [
     type: "public",
     participants: 500,
     status: "joining",
-    prize: "₹10,00,000",
-    entryFee: "₹5,000",
+    prize: "£1,000,000",
+    entryFee: "£5,000",
     creator: "Sports X",
     maxParticipants: 1000
   },
@@ -210,8 +210,8 @@ export const mockLeagues = [
     type: "public",
     participants: 200,
     status: "active",
-    prize: "₹25,000",
-    entryFee: "₹500",
+    prize: "£25,000",
+    entryFee: "£500",
     creator: "Sports X",
     maxParticipants: 500
   },
@@ -221,8 +221,8 @@ export const mockLeagues = [
     type: "public",
     participants: 150,
     status: "joining",
-    prize: "₹15,000",
-    entryFee: "₹300",
+    prize: "£15,000",
+    entryFee: "£300",
     creator: "Sports X",
     maxParticipants: 300
   }
@@ -233,7 +233,7 @@ export const mockNotifications = [
     id: 1,
     type: "bid",
     title: "New Bid on Virat Kohli",
-    message: "Thunderbolts bid ₹15.5 Cr",
+    message: "Thunderbolts bid £15.5M",
     time: "2 min ago",
     read: false
   },
@@ -266,18 +266,18 @@ export const mockUser = {
   totalMatches: 28,
   winRate: 42.8,
   favoriteTeam: "RCB",
-  joinedDate: "2024-03-15"
+  joinedDate: "2024-03-15",
+  budget: 25000000,
+  remaining: 8000000
 };
 
 export const formatCurrency = (amount) => {
-  if (amount >= 10000000) {
-    return `₹${(amount / 10000000).toFixed(1)} Cr`;
-  } else if (amount >= 100000) {
-    return `₹${(amount / 100000).toFixed(1)} L`;
+  if (amount >= 1000000) {
+    return `£${(amount / 1000000).toFixed(1)}M`;
   } else if (amount >= 1000) {
-    return `₹${(amount / 1000).toFixed(1)} K`;
+    return `£${(amount / 1000).toFixed(1)}K`;
   }
-  return `₹${amount}`;
+  return `£${amount}`;
 };
 
 export const getTimeAgo = (timestamp) => {
