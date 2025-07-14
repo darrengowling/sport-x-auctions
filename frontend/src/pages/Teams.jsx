@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Trophy, TrendingUp, Star, Crown, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -6,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { mockTeams, mockPlayers, formatCurrency } from '../data/mock';
 
 const Teams = () => {
+  const navigate = useNavigate();
   const [selectedTeam, setSelectedTeam] = useState(mockTeams[0]);
 
   // Mock team players - in real app this would come from backend
@@ -24,6 +26,12 @@ const Teams = () => {
     }
   };
 
+  // Handle team creation
+  const handleCreateTeam = () => {
+    // For now, navigate to leagues where they can create leagues and teams
+    navigate('/leagues');
+  };
+
   // Fix: Calculate budget percentage properly and cap at 100%
   const budgetPercentage = Math.min((selectedTeam.spent / selectedTeam.budget) * 100, 100);
 
@@ -34,6 +42,7 @@ const Teams = () => {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">My Teams</h1>
           <Button 
+            onClick={handleCreateTeam}
             size="sm"
             className="bg-white text-green-600 hover:bg-gray-100"
           >
@@ -79,8 +88,8 @@ const Teams = () => {
                 {selectedTeam.avatar}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">{selectedTeam.name}</h2>
-                <p className="text-sm text-white/80">Owned by {selectedTeam.owner}</p>
+                <h2 className="text-xl font-bold text-gray-900">{selectedTeam.name}</h2>
+                <p className="text-sm text-gray-600">Owned by {selectedTeam.owner}</p>
               </div>
             </CardTitle>
           </CardHeader>
@@ -104,9 +113,9 @@ const Teams = () => {
             
             {/* Fixed Budget Bar */}
             <div className="mt-4">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span className="text-white">Budget Utilized</span>
-                <span className="text-white">{Math.round(budgetPercentage)}%</span>
+              <div className="flex justify-between text-sm text-gray-700 mb-1">
+                <span>Budget Utilized</span>
+                <span>{Math.round(budgetPercentage)}%</span>
               </div>
               <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
                 <div 
@@ -114,7 +123,7 @@ const Teams = () => {
                   style={{ width: `${budgetPercentage}%` }}
                 ></div>
               </div>
-              <div className="flex justify-between text-xs text-white/80 mt-2">
+              <div className="flex justify-between text-xs text-gray-600 mt-2">
                 <span>{formatCurrency(selectedTeam.spent)} spent</span>
                 <span>{formatCurrency(selectedTeam.budget)} total</span>
               </div>
@@ -150,7 +159,7 @@ const Teams = () => {
         {/* Squad */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-white">
+            <CardTitle className="flex items-center justify-between text-gray-900">
               <span>Squad Players</span>
               <Badge variant="outline" className="border-blue-200 text-blue-600">
                 {teamPlayers.length} Players
@@ -190,7 +199,10 @@ const Teams = () => {
                 <Users className="mx-auto text-gray-400 mb-3" size={48} />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Players Yet</h3>
                 <p className="text-sm text-gray-600 mb-4">Start building your squad by joining auctions</p>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                <Button 
+                  onClick={() => navigate('/auctions')}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
                   Join Auction
                 </Button>
               </div>
@@ -201,12 +213,12 @@ const Teams = () => {
         {/* Team Performance */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="text-white">Team Performance</CardTitle>
+            <CardTitle className="text-gray-900">Team Performance</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Recent Form</span>
+                <span className="text-sm text-gray-700 font-medium">Recent Form</span>
                 <div className="flex space-x-1">
                   <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
                   <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center">W</div>
@@ -218,20 +230,20 @@ const Teams = () => {
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Matches Played:</span>
-                  <span className="font-medium">15</span>
+                  <span className="text-gray-700 font-medium">Matches Played:</span>
+                  <span className="font-bold text-gray-900">15</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Matches Won:</span>
-                  <span className="font-medium text-green-600">10</span>
+                  <span className="text-gray-700 font-medium">Matches Won:</span>
+                  <span className="font-bold text-green-600">10</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">League Position:</span>
-                  <span className="font-medium">#2</span>
+                  <span className="text-gray-700 font-medium">League Position:</span>
+                  <span className="font-bold text-gray-900">#2</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Points:</span>
-                  <span className="font-medium text-blue-600">2,450</span>
+                  <span className="text-gray-700 font-medium">Points:</span>
+                  <span className="font-bold text-blue-600">2,450</span>
                 </div>
               </div>
             </div>

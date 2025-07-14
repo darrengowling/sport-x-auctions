@@ -51,39 +51,35 @@ const Home = () => {
     fetchData();
   }, []);
 
+  const hotPlayers = players.filter(player => player.isHotPick).slice(0, 3);
+  const liveAuction = auctions.find(auction => auction.status === 'live');
+  const upcomingAuctions = auctions.filter(auction => auction.status === 'upcoming').slice(0, 3);
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center pb-20">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h1 className="text-3xl font-bold text-white mb-2">Sports X</h1>
-          <p className="text-blue-200">Loading your pro cricket auction experience...</p>
+          <p className="text-white">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
-
-  const liveAuction = auctions.find(auction => auction.status === 'live');
-  const hotPlayers = players.filter(player => player.is_hot_pick);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-lg">SX</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Sport X</h1>
-              <p className="text-blue-100 text-sm">Sports gaming with friends</p>
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold">Welcome back! 🏏</h1>
+            <p className="text-blue-100 opacity-90">Ready to dominate the auctions?</p>
           </div>
-          <div className="flex items-center space-x-2">
+          
+          <div className="flex items-center space-x-4">
             <button 
-              onClick={() => setNotifications(0)}
-              className="relative p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+              onClick={() => navigate('/profile')}
+              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
             >
               <Bell size={20} />
               {notifications > 0 && (
@@ -92,9 +88,11 @@ const Home = () => {
                 </span>
               )}
             </button>
-            <button className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
-              <Search size={20} />
-            </button>
+            
+            <div className="text-right">
+              <p className="text-sm font-medium">{currentTime.toLocaleTimeString()}</p>
+              <p className="text-xs text-blue-200">{currentTime.toLocaleDateString()}</p>
+            </div>
           </div>
         </div>
 
@@ -166,24 +164,31 @@ const Home = () => {
         {/* Hot Players */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
-              <Flame className="text-orange-500" size={20} />
-              <span>Hot Players</span>
-              <Badge variant="destructive" className="ml-auto">
-                Trending
-              </Badge>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Flame className="text-orange-500" size={20} />
+                <span>Hot Players</span>
+              </div>
+              <Button
+                onClick={() => navigate('/auctions')}
+                variant="outline"
+                size="sm"
+                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+              >
+                View All
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
-              {hotPlayers.slice(0, 3).map((player) => (
+              {hotPlayers.map((player) => (
                 <div 
                   key={player.id} 
                   className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                   onClick={() => navigate('/auctions')}
                 >
                   <img 
-                    src={player.image_url} 
+                    src={player.image} 
                     alt={player.name}
                     className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
                   />
@@ -192,12 +197,25 @@ const Home = () => {
                     <p className="text-sm text-gray-500">{player.team} • {player.role}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">{ApiService.formatCurrency(player.current_bid)}</p>
+                    <p className="font-bold text-green-600">{ApiService.formatCurrency(player.currentBid)}</p>
                     <p className="text-xs text-gray-500">{player.bidders?.length || 0} bidders</p>
                   </div>
                 </div>
               ))}
             </div>
+            {hotPlayers.length === 0 && (
+              <div className="text-center py-8">
+                <Flame className="mx-auto text-gray-400 mb-3" size={48} />
+                <p className="text-gray-500">No hot players right now</p>
+                <Button 
+                  onClick={() => navigate('/auctions')}
+                  className="mt-2"
+                  size="sm"
+                >
+                  Browse All Players
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -228,14 +246,24 @@ const Home = () => {
         {/* Upcoming Auctions */}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="text-blue-500" size={20} />
-              <span>Upcoming Auctions</span>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Clock className="text-blue-500" size={20} />
+                <span>Upcoming Auctions</span>
+              </div>
+              <Button
+                onClick={() => navigate('/auctions')}
+                variant="outline"
+                size="sm"
+                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+              >
+                View All
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
-              {auctions.filter(auction => auction.status === 'upcoming').map((auction) => (
+              {upcomingAuctions.map((auction) => (
                 <div 
                   key={auction.id} 
                   className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
@@ -243,34 +271,30 @@ const Home = () => {
                 >
                   <div>
                     <h4 className="font-semibold text-gray-900">{auction.name}</h4>
-                    <p className="text-sm text-gray-500">{auction.participants?.length || 0} teams registered</p>
+                    <p className="text-sm text-gray-500">{auction.participants || 0} teams registered</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-blue-600">
-                      {new Date(auction.start_time).toLocaleDateString()}
+                      {new Date(auction.startTime).toLocaleDateString()}
                     </p>
-                    <Badge variant="outline" className="border-blue-200 text-blue-600">
-                      Upcoming
-                    </Badge>
+                    <p className="text-xs text-gray-500">
+                      {new Date(auction.startTime).toLocaleTimeString()}
+                    </p>
                   </div>
                 </div>
               ))}
               
-              {/* If no upcoming auctions, show fallback with navigation */}
-              {auctions.filter(auction => auction.status === 'upcoming').length === 0 && (
-                <div 
-                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
-                  onClick={() => navigate('/auctions')}
-                >
-                  <div>
-                    <h4 className="font-semibold text-gray-900">View All Auctions</h4>
-                    <p className="text-sm text-gray-500">Browse available cricket auctions</p>
-                  </div>
-                  <div className="text-right">
-                    <Badge className="bg-blue-500 text-white">
-                      Browse
-                    </Badge>
-                  </div>
+              {upcomingAuctions.length === 0 && (
+                <div className="text-center py-8">
+                  <Clock className="mx-auto text-gray-400 mb-3" size={48} />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Upcoming Auctions</h3>
+                  <p className="text-sm text-gray-600 mb-4">Check back later for new auction opportunities</p>
+                  <Button 
+                    onClick={() => navigate('/auctions')}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    Browse Auctions
+                  </Button>
                 </div>
               )}
             </div>
