@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix splash page auto-redirect issue and enhance navigation accessibility for Sport X Pro Cricket Auctions app"
+user_problem_statement: "Comprehensive navigation audit and fix for Sport X Pro Cricket Auctions app - ensure all 'Get Started' steps link through the app and all buttons take users to required destinations"
 
 backend:
   - task: "Health Check Endpoints"
