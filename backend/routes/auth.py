@@ -60,7 +60,7 @@ def verify_jwt_token(token: str) -> Optional[dict]:
         return None
 
 @router.post("/register", response_model=UserResponse)
-async def register_with_email(user_data: UserCreate, db: AsyncIOMotorDatabase = None):
+async def register_with_email(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Register new user with email and password"""
     # For now, we'll use mock data since we don't have the DB dependency set up
     # In production, this would check if email exists and save to database
