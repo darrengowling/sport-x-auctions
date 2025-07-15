@@ -292,7 +292,13 @@ const HowItWorks = () => {
               <div 
                 key={index} 
                 className="bg-slate-800/50 backdrop-blur-sm rounded-full px-6 py-3 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
-                onClick={() => navigate('/auctions')}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate('/auctions');
+                  } else {
+                    navigate('/splash');
+                  }
+                }}
               >
                 <span className="text-white font-medium">{sport}</span>
               </div>
