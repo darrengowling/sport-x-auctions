@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 const SplashPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -17,6 +18,13 @@ const SplashPage = () => {
 
   // Check if this is accessed directly (not from root)
   const isDirectAccess = location.pathname === '/splash';
+
+  // Navigate to how-it-works when user becomes authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/how-it-works');
+    }
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     setIsVisible(true);
