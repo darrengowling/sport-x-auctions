@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Users, Gavel, Trophy, Target, Gift, Heart } from 'lucide-react';
+import { ArrowRight, Users, Gavel, Trophy, Target, Gift, Heart, Play } from 'lucide-react';
 
 const HowItWorks = () => {
   const navigate = useNavigate();
@@ -10,25 +10,33 @@ const HowItWorks = () => {
       icon: <Users className="w-8 h-8" />,
       title: "Join Your Peer Group",
       description: "Sign up and get matched with like-minded sports fans in small, competitive groups",
-      color: "bg-blue-500"
+      color: "bg-blue-500",
+      action: () => navigate('/home'),
+      actionText: "Create Account"
     },
     {
       icon: <Gavel className="w-8 h-8" />,
       title: "Bid in Live Auctions",
       description: "Compete for exclusive ownership of real teams and players across cricket, rugby, tennis, golf, and football",
-      color: "bg-purple-500"
+      color: "bg-purple-500",
+      action: () => navigate('/auctions'),
+      actionText: "Browse Auctions"
     },
     {
       icon: <Target className="w-8 h-8" />,
       title: "Track Live Performance",
       description: "Your owned players and teams score points based on real-world performance with live updates",
-      color: "bg-green-500"
+      color: "bg-green-500",
+      action: () => navigate('/teams'),
+      actionText: "View Teams"
     },
     {
       icon: <Trophy className="w-8 h-8" />,
       title: "Compete & Win",
       description: "Climb the leaderboards and win rewards - play for fun, cash prizes, or charity fundraising",
-      color: "bg-orange-500"
+      color: "bg-orange-500",
+      action: () => navigate('/leagues'),
+      actionText: "Join Leagues"
     }
   ];
 
@@ -36,22 +44,26 @@ const HowItWorks = () => {
     {
       icon: <Users className="w-6 h-6" />,
       title: "Peer-to-Peer Gaming",
-      description: "Small groups, big competition"
+      description: "Small groups, big competition",
+      action: () => navigate('/leagues')
     },
     {
       icon: <Target className="w-6 h-6" />,
       title: "Real-Time Scoring",
-      description: "Live updates as sports happen"
+      description: "Live updates as sports happen",
+      action: () => navigate('/auctions')
     },
     {
       icon: <Gift className="w-6 h-6" />,
       title: "Custom Tournaments",
-      description: "Create your own competitions"
+      description: "Create your own competitions",
+      action: () => navigate('/leagues')
     },
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Play for Good",
-      description: "Fun, cash, or charity options"
+      description: "Fun, cash, or charity options",
+      action: () => navigate('/leagues')
     }
   ];
 
@@ -98,9 +110,10 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Step-by-Step Flow */}
+        {/* Interactive Get Started Flow */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">Getting Started in 4 Easy Steps</h2>
+          <h2 className="text-3xl font-bold text-white text-center mb-4">Get Started in 4 Easy Steps</h2>
+          <p className="text-slate-300 text-center mb-12">Click on each step to explore that part of the app</p>
           
           {/* Desktop Flow */}
           <div className="hidden md:block">
@@ -113,7 +126,7 @@ const HowItWorks = () => {
                   <div key={index} className="relative">
                     <div className="text-center">
                       {/* Step Icon */}
-                      <div className={`${step.color} w-16 h-16 rounded-full flex items-center justify-center text-white mx-auto mb-4 relative z-10`}>
+                      <div className={`${step.color} w-16 h-16 rounded-full flex items-center justify-center text-white mx-auto mb-4 relative z-10 cursor-pointer hover:scale-110 transition-transform`}>
                         {step.icon}
                       </div>
                       
@@ -123,9 +136,18 @@ const HowItWorks = () => {
                       </div>
                       
                       {/* Content */}
-                      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 mt-4">
+                      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 mt-4 hover:bg-slate-800/70 transition-colors">
                         <h3 className="text-white font-bold text-lg mb-2">{step.title}</h3>
-                        <p className="text-slate-300 text-sm leading-relaxed">{step.description}</p>
+                        <p className="text-slate-300 text-sm leading-relaxed mb-4">{step.description}</p>
+                        
+                        {/* Interactive Button */}
+                        <button
+                          onClick={step.action}
+                          className={`${step.color} hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 flex items-center space-x-2 mx-auto`}
+                        >
+                          <Play className="w-4 h-4" />
+                          <span>{step.actionText}</span>
+                        </button>
                       </div>
                     </div>
                     
@@ -154,7 +176,16 @@ const HowItWorks = () => {
                   </div>
                   <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 flex-1">
                     <h3 className="text-white font-bold text-lg mb-2">{step.title}</h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">{step.description}</p>
+                    <p className="text-slate-300 text-sm leading-relaxed mb-4">{step.description}</p>
+                    
+                    {/* Interactive Button */}
+                    <button
+                      onClick={step.action}
+                      className={`${step.color} hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 flex items-center space-x-2`}
+                    >
+                      <Play className="w-4 h-4" />
+                      <span>{step.actionText}</span>
+                    </button>
                   </div>
                 </div>
                 {index < steps.length - 1 && (
@@ -167,12 +198,16 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Key Features Grid */}
+        {/* Interactive Features Grid */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-12">What Makes Sport X Special</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-slate-800/70 transition-all">
+              <div 
+                key={index} 
+                className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
+                onClick={feature.action}
+              >
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4">
                   {feature.icon}
                 </div>
@@ -187,20 +222,38 @@ const HowItWorks = () => {
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-8">Choose Your Playing Style</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-green-500/30">
+            <div 
+              className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-green-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
+              onClick={() => navigate('/leagues')}
+            >
               <div className="text-4xl mb-4">🎮</div>
               <h3 className="text-white font-bold text-xl mb-3">For Fun</h3>
-              <p className="text-slate-300">Play casually with friends and enjoy the thrill of competition without stakes</p>
+              <p className="text-slate-300 mb-4">Play casually with friends and enjoy the thrill of competition without stakes</p>
+              <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Start Free Play
+              </button>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-yellow-500/30">
+            <div 
+              className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-yellow-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
+              onClick={() => navigate('/leagues')}
+            >
               <div className="text-4xl mb-4">💰</div>
               <h3 className="text-white font-bold text-xl mb-3">For Cash</h3>
-              <p className="text-slate-300">Compete for real prizes and cash rewards in competitive tournaments</p>
+              <p className="text-slate-300 mb-4">Compete for real prizes and cash rewards in competitive tournaments</p>
+              <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Join Cash Leagues
+              </button>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-pink-500/30">
+            <div 
+              className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-pink-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
+              onClick={() => navigate('/leagues')}
+            >
               <div className="text-4xl mb-4">❤️</div>
               <h3 className="text-white font-bold text-xl mb-3">For Charity</h3>
-              <p className="text-slate-300">Raise funds for good causes while enjoying your passion for sports</p>
+              <p className="text-slate-300 mb-4">Raise funds for good causes while enjoying your passion for sports</p>
+              <button className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Support Charity
+              </button>
             </div>
           </div>
         </div>
@@ -210,14 +263,18 @@ const HowItWorks = () => {
           <h2 className="text-3xl font-bold text-white text-center mb-8">Multiple Sports, Endless Possibilities</h2>
           <div className="flex flex-wrap justify-center gap-4">
             {['🏏 Cricket', '🏈 Rugby', '🎾 Tennis', '⛳ Golf', '⚽ Football'].map((sport, index) => (
-              <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-full px-6 py-3">
+              <div 
+                key={index} 
+                className="bg-slate-800/50 backdrop-blur-sm rounded-full px-6 py-3 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
+                onClick={() => navigate('/auctions')}
+              >
                 <span className="text-white font-medium">{sport}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA Section */}
+        {/* Enhanced CTA Section */}
         <div className="text-center">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to Own the Game?</h2>
@@ -226,10 +283,16 @@ const HowItWorks = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
-                onClick={() => navigate('/home')}
+                onClick={() => navigate('/auctions')}
                 className="bg-white text-blue-600 font-bold py-3 px-8 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105"
               >
-                Start Playing Now
+                Start Bidding Now
+              </button>
+              <button 
+                onClick={() => navigate('/leagues')}
+                className="bg-green-500 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105"
+              >
+                Create Your League
               </button>
               <button 
                 onClick={() => navigate('/')}
