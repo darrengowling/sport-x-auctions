@@ -53,7 +53,13 @@ const HowItWorks = () => {
       icon: <Users className="w-6 h-6" />,
       title: "Peer-to-Peer Gaming",
       description: "Small groups, big competition",
-      action: () => navigate('/leagues')
+      action: () => {
+        if (isAuthenticated) {
+          navigate('/leagues');
+        } else {
+          navigate('/splash');
+        }
+      }
     },
     {
       icon: <Target className="w-6 h-6" />,
