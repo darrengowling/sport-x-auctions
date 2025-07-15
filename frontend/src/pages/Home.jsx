@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy } from 'lucide-react';
+import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy, Star, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -67,7 +67,7 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20 sm:pb-0">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-8">
         <div className="flex items-center justify-between mb-6">
@@ -112,7 +112,7 @@ const Home = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 -mt-2 pb-6">
+      <div className="p-4 space-y-6 -mt-2">
         {/* Live Auction Alert */}
         {liveAuction && (
           <Card className="border-2 border-red-500 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg transform hover:scale-105 transition-transform duration-200">
@@ -155,7 +155,7 @@ const Home = () => {
           
           <Card 
             className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg cursor-pointer hover:scale-105 transition-transform"
-            onClick={() => navigate('/teams')}
+            onClick={() => navigate('/profile')}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -208,6 +208,7 @@ const Home = () => {
                     <p className="font-bold text-green-600">{ApiService.formatCurrency(player.currentBid)}</p>
                     <p className="text-xs text-gray-500">{player.bidders?.length || 0} bidders</p>
                   </div>
+                  <ArrowRight size={16} className="text-gray-400" />
                 </div>
               ))}
             </div>
@@ -305,6 +306,69 @@ const Home = () => {
                   </Button>
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Featured Leagues */}
+        <Card className="shadow-lg">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Star className="text-yellow-500" size={20} />
+                <span>Featured Leagues</span>
+              </div>
+              <Button
+                onClick={() => navigate('/leagues')}
+                variant="outline"
+                size="sm"
+                className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+              >
+                View All
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              <div 
+                className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors border border-yellow-200"
+                onClick={() => navigate('/leagues')}
+              >
+                <div>
+                  <h4 className="font-semibold text-gray-900">🏆 Global Masters</h4>
+                  <p className="text-sm text-gray-500">500/1000 participants • £1,000,000 prize</p>
+                </div>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/leagues');
+                  }}
+                  size="sm"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                >
+                  Join Now
+                </Button>
+              </div>
+              
+              <div 
+                className="flex items-center justify-between p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors border border-green-200"
+                onClick={() => navigate('/leagues')}
+              >
+                <div>
+                  <h4 className="font-semibold text-gray-900">🎮 Friends Championship</h4>
+                  <p className="text-sm text-gray-500">8 participants • £50,000 prize</p>
+                </div>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/leagues');
+                  }}
+                  size="sm"
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                >
+                  View Details
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
