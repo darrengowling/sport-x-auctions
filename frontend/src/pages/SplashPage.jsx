@@ -11,6 +11,8 @@ const SplashPage = () => {
   const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   // Check if this is accessed directly (not from root)
   const isDirectAccess = location.pathname === '/splash';
