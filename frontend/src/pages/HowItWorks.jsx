@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Users, Gavel, Trophy, Target, Gift, Heart, Play } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const HowItWorks = () => {
   const navigate = useNavigate();
