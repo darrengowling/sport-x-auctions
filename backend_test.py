@@ -349,6 +349,200 @@ class APITester:
         except Exception as e:
             self.log_test("GET /api/users/user-1 - Get Cricket Fan", False, f"Exception: {str(e)}")
     
+    def test_authentication_endpoints(self):
+        """Test authentication API endpoints"""
+        print("=== Testing Authentication API Endpoints ===")
+        
+        # Test user registration with email
+        try:
+            register_data = {
+                "firstName": "Rohit",
+                "lastName": "Sharma",
+                "email": "rohit.sharma@cricket.com",
+                "password": "securepassword123",
+                "favoriteTeam": "MI"
+            }
+            response = self.session.post(f"{self.base_url}/auth/register", json=register_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("firstName") == "Rohit" and user.get("email") == "rohit.sharma@cricket.com":
+                        self.log_test("POST /api/auth/register - Email registration", True, 
+                                    f"User: {user.get('firstName')} {user.get('lastName')}, Email: {user.get('email')}", data)
+                    else:
+                        self.log_test("POST /api/auth/register - Email registration", False, 
+                                    f"User data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/register - Email registration", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/register - Email registration", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/register - Email registration", False, f"Exception: {str(e)}")
+        
+        # Test user login with email
+        try:
+            login_data = {
+                "email": "virat.kohli@cricket.com",
+                "password": "password123"
+            }
+            response = self.session.post(f"{self.base_url}/auth/login", json=login_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("email") == "virat.kohli@cricket.com" and user.get("provider") == "email":
+                        self.log_test("POST /api/auth/login - Email login", True, 
+                                    f"User: {user.get('firstName')} {user.get('lastName')}, Level: {user.get('level')}", data)
+                    else:
+                        self.log_test("POST /api/auth/login - Email login", False, 
+                                    f"User data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/login - Email login", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/login - Email login", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/login - Email login", False, f"Exception: {str(e)}")
+        
+        # Test guest login
+        try:
+            guest_data = {
+                "deviceId": "device_12345_test"
+            }
+            response = self.session.post(f"{self.base_url}/auth/guest", json=guest_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("isGuest") == True and user.get("provider") == "guest":
+                        self.log_test("POST /api/auth/guest - Guest login", True, 
+                                    f"Guest User: {user.get('firstName')} {user.get('lastName')}, Level: {user.get('level')}", data)
+                    else:
+                        self.log_test("POST /api/auth/guest - Guest login", False, 
+                                    f"Guest user data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/guest - Guest login", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/guest - Guest login", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/guest - Guest login", False, f"Exception: {str(e)}")
+        
+        # Test phone verification code sending
+        try:
+            phone_data = {
+                "phoneNumber": "+919876543210"
+            }
+            response = self.session.post(f"{self.base_url}/auth/phone/send-code", json=phone_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "sent successfully" in data["message"]:
+                    self.log_test("POST /api/auth/phone/send-code - Send verification code", True, 
+                                f"Message: {data.get('message')}", data)
+                else:
+                    self.log_test("POST /api/auth/phone/send-code - Send verification code", False, 
+                                f"Unexpected response: {data}")
+            else:
+                self.log_test("POST /api/auth/phone/send-code - Send verification code", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/phone/send-code - Send verification code", False, f"Exception: {str(e)}")
+        
+        # Test Google social login
+        try:
+            google_data = {
+                "id": "google_123456789",
+                "email": "msdhoni@gmail.com",
+                "firstName": "MS",
+                "lastName": "Dhoni",
+                "avatar": "https://example.com/avatar.jpg",
+                "provider": "google"
+            }
+            response = self.session.post(f"{self.base_url}/auth/google", json=google_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("provider") == "google" and user.get("email") == "msdhoni@gmail.com":
+                        self.log_test("POST /api/auth/google - Google social login", True, 
+                                    f"User: {user.get('firstName')} {user.get('lastName')}, Provider: {user.get('provider')}", data)
+                    else:
+                        self.log_test("POST /api/auth/google - Google social login", False, 
+                                    f"Google user data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/google - Google social login", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/google - Google social login", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/google - Google social login", False, f"Exception: {str(e)}")
+        
+        # Test Facebook social login
+        try:
+            facebook_data = {
+                "id": "facebook_987654321",
+                "email": "bumrah@facebook.com",
+                "firstName": "Jasprit",
+                "lastName": "Bumrah",
+                "avatar": "https://example.com/bumrah.jpg",
+                "provider": "facebook"
+            }
+            response = self.session.post(f"{self.base_url}/auth/facebook", json=facebook_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("provider") == "facebook" and user.get("email") == "bumrah@facebook.com":
+                        self.log_test("POST /api/auth/facebook - Facebook social login", True, 
+                                    f"User: {user.get('firstName')} {user.get('lastName')}, Provider: {user.get('provider')}", data)
+                    else:
+                        self.log_test("POST /api/auth/facebook - Facebook social login", False, 
+                                    f"Facebook user data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/facebook - Facebook social login", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/facebook - Facebook social login", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/facebook - Facebook social login", False, f"Exception: {str(e)}")
+        
+        # Test Apple social login
+        try:
+            apple_data = {
+                "id": "apple_555666777",
+                "email": "hardik@icloud.com",
+                "firstName": "Hardik",
+                "lastName": "Pandya",
+                "avatar": "https://example.com/hardik.jpg",
+                "provider": "apple"
+            }
+            response = self.session.post(f"{self.base_url}/auth/apple", json=apple_data)
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    user = data["user"]
+                    if user.get("provider") == "apple" and user.get("email") == "hardik@icloud.com":
+                        self.log_test("POST /api/auth/apple - Apple social login", True, 
+                                    f"User: {user.get('firstName')} {user.get('lastName')}, Provider: {user.get('provider')}", data)
+                    else:
+                        self.log_test("POST /api/auth/apple - Apple social login", False, 
+                                    f"Apple user data mismatch: {user}")
+                else:
+                    self.log_test("POST /api/auth/apple - Apple social login", False, 
+                                f"Missing token or user in response: {list(data.keys())}")
+            else:
+                self.log_test("POST /api/auth/apple - Apple social login", False, 
+                            f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/apple - Apple social login", False, f"Exception: {str(e)}")
+
     def test_error_handling(self):
         """Test error handling for invalid IDs"""
         print("=== Testing Error Handling ===")
