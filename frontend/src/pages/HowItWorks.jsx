@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const HowItWorks = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const steps = [
     {
@@ -12,8 +13,14 @@ const HowItWorks = () => {
       title: "Join Your Peer Group",
       description: "Sign up and get matched with like-minded sports fans in small, competitive groups",
       color: "bg-blue-500",
-      action: () => navigate('/home'),
-      actionText: "Create Account"
+      action: () => {
+        if (isAuthenticated) {
+          navigate('/home');
+        } else {
+          navigate('/splash'); // Navigate back to splash for authentication
+        }
+      },
+      actionText: isAuthenticated ? "Go to Dashboard" : "Sign Up Now"
     },
     {
       icon: <Gavel className="w-8 h-8" />,
