@@ -55,12 +55,17 @@ const SplashPage = () => {
   };
 
   const handleCreateAccount = () => {
-    // Navigate to how it works page
-    navigate('/how-it-works');
+    // Open register modal instead of navigating to how-it-works
+    setShowRegisterModal(true);
   };
 
   const handleSignIn = () => {
-    // Navigate to how it works page
+    // Open login modal instead of navigating to how-it-works
+    setShowLoginModal(true);
+  };
+
+  const handleAuthSuccess = () => {
+    // After successful authentication, navigate to how-it-works
     navigate('/how-it-works');
   };
 
