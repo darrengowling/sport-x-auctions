@@ -247,7 +247,7 @@ frontend:
           agent: "testing"
           comment: "✅ ROOT ROUTE VERIFIED: Root route (/) always shows splash page via SplashHandler component with no localStorage interference. Backend connection successful (Sports X Pro Cricket Auctions API running). App loading optimized with 500ms timeout. Complete user journey tested: splash → home → back to splash via navigation works seamlessly."
 
-  - task: "Splash Page Navigation Flow"
+  - task: "Splash Navigation Flow"
     implemented: true
     working: true
     file: "/app/frontend/src/pages/SplashPage.jsx"
@@ -261,6 +261,54 @@ frontend:
         - working: true
           agent: "testing"
           comment: "✅ SPLASH NAVIGATION FLOW VERIFIED: Direct route access (/splash) shows splash with back button correctly. Back button functionality tested - successfully navigates to /home when splash accessed directly. Route distinction confirmed - splash behaves differently when accessed from root vs direct route. All action buttons tested and working: Create Account, Sign In, Continue as Guest all navigate to /home. Content slides transition properly with 3 slide indicators and no auto-redirect confirmed."
+
+  - task: "Navigation Audit and Fixes"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/SplashPage.jsx, /app/frontend/src/pages/HowItWorks.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Starting comprehensive navigation audit. Identified issues: 1) SplashPage buttons (Create Account, Sign In, Continue as Guest) all navigate to /how-it-works instead of proper auth flow. 2) HowItWorks 'Get Started' steps need proper navigation integration. 3) Need systematic button audit across all pages."
+
+  - task: "Authentication Flow Integration"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/SplashPage.jsx, /app/frontend/src/components/auth/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Authentication components exist but splash page flow doesn't integrate properly. Need to connect splash page buttons to proper auth modals and flows."
+
+  - task: "Get Started Steps Navigation"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/HowItWorks.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "HowItWorks page has 4 'Get Started' steps that should properly link through the app. Currently some navigate correctly but first step needs auth integration."
+
+  - task: "Comprehensive Button Audit"
+    implemented: false
+    working: false
+    file: "Multiple pages"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Need to systematically check all buttons across all pages (Home, Auctions, Teams, Leagues, Profile, AuctionRoom) to ensure proper navigation."
 
 metadata:
   created_by: "main_agent"
