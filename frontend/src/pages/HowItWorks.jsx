@@ -232,35 +232,53 @@ const HowItWorks = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div 
               className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-green-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
-              onClick={() => navigate('/leagues')}
+              onClick={() => {
+                if (isAuthenticated) {
+                  navigate('/leagues');
+                } else {
+                  navigate('/splash');
+                }
+              }}
             >
               <div className="text-4xl mb-4">🎮</div>
               <h3 className="text-white font-bold text-xl mb-3">For Fun</h3>
               <p className="text-slate-300 mb-4">Play casually with friends and enjoy the thrill of competition without stakes</p>
               <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Start Free Play
+                {isAuthenticated ? 'Start Free Play' : 'Sign Up for Free Play'}
               </button>
             </div>
             <div 
               className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-yellow-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
-              onClick={() => navigate('/leagues')}
+              onClick={() => {
+                if (isAuthenticated) {
+                  navigate('/leagues');
+                } else {
+                  navigate('/splash');
+                }
+              }}
             >
               <div className="text-4xl mb-4">💰</div>
               <h3 className="text-white font-bold text-xl mb-3">For Cash</h3>
               <p className="text-slate-300 mb-4">Compete for real prizes and cash rewards in competitive tournaments</p>
               <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Join Cash Leagues
+                {isAuthenticated ? 'Join Cash Leagues' : 'Sign Up for Cash Leagues'}
               </button>
             </div>
             <div 
               className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-pink-500/30 hover:bg-slate-800/70 transition-all cursor-pointer transform hover:scale-105"
-              onClick={() => navigate('/leagues')}
+              onClick={() => {
+                if (isAuthenticated) {
+                  navigate('/leagues');
+                } else {
+                  navigate('/splash');
+                }
+              }}
             >
               <div className="text-4xl mb-4">❤️</div>
               <h3 className="text-white font-bold text-xl mb-3">For Charity</h3>
               <p className="text-slate-300 mb-4">Raise funds for good causes while enjoying your passion for sports</p>
               <button className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Support Charity
+                {isAuthenticated ? 'Support Charity' : 'Sign Up for Charity'}
               </button>
             </div>
           </div>
