@@ -248,7 +248,13 @@ const SplashPage = () => {
       {/* Authentication Modals */}
       <LoginModal
         isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
+        onClose={() => {
+          setShowLoginModal(false);
+          // Check if user is authenticated and navigate if so
+          if (isAuthenticated) {
+            navigate('/how-it-works');
+          }
+        }}
         onSwitchToRegister={() => {
           setShowLoginModal(false);
           setShowRegisterModal(true);
@@ -257,7 +263,13 @@ const SplashPage = () => {
 
       <RegisterModal
         isOpen={showRegisterModal}
-        onClose={() => setShowRegisterModal(false)}
+        onClose={() => {
+          setShowRegisterModal(false);
+          // Check if user is authenticated and navigate if so
+          if (isAuthenticated) {
+            navigate('/how-it-works');
+          }
+        }}
         onSwitchToLogin={() => {
           setShowRegisterModal(false);
           setShowLoginModal(true);
