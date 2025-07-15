@@ -59,19 +59,37 @@ const HowItWorks = () => {
       icon: <Target className="w-6 h-6" />,
       title: "Real-Time Scoring",
       description: "Live updates as sports happen",
-      action: () => navigate('/auctions')
+      action: () => {
+        if (isAuthenticated) {
+          navigate('/auctions');
+        } else {
+          navigate('/splash');
+        }
+      }
     },
     {
       icon: <Gift className="w-6 h-6" />,
       title: "Custom Tournaments",
       description: "Create your own competitions",
-      action: () => navigate('/leagues')
+      action: () => {
+        if (isAuthenticated) {
+          navigate('/leagues');
+        } else {
+          navigate('/splash');
+        }
+      }
     },
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Play for Good",
       description: "Fun, cash, or charity options",
-      action: () => navigate('/leagues')
+      action: () => {
+        if (isAuthenticated) {
+          navigate('/leagues');
+        } else {
+          navigate('/splash');
+        }
+      }
     }
   ];
 
