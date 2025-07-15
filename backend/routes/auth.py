@@ -6,7 +6,7 @@ import uuid
 import jwt
 from typing import Optional
 import os
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 
 from models.user_auth import (
     UserCreate, UserLogin, PhoneCreate, PhoneLogin, 
@@ -23,6 +23,14 @@ JWT_EXPIRATION = timedelta(days=30)
 
 # Mock phone verification codes (in production use SMS service)
 verification_codes = {}
+
+# Database dependency
+async def get_database() -> AsyncIOMotorDatabase:
+    """Get database instance"""
+    mongo_url = os.environ['MONGO_URL']
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[os.environ['DB_NAME']]
+    return db
 
 def hash_password(password: str) -> str:
     """Hash password using SHA-256"""
