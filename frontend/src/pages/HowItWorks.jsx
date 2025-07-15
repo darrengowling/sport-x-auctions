@@ -291,16 +291,28 @@ const HowItWorks = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
-                onClick={() => navigate('/auctions')}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate('/auctions');
+                  } else {
+                    navigate('/splash');
+                  }
+                }}
                 className="bg-white text-blue-600 font-bold py-3 px-8 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105"
               >
-                Start Bidding Now
+                {isAuthenticated ? 'Start Bidding Now' : 'Sign Up to Bid'}
               </button>
               <button 
-                onClick={() => navigate('/leagues')}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate('/leagues');
+                  } else {
+                    navigate('/splash');
+                  }
+                }}
                 className="bg-green-500 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105"
               >
-                Create Your League
+                {isAuthenticated ? 'Create Your League' : 'Join to Create League'}
               </button>
               <button 
                 onClick={() => navigate('/')}
