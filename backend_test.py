@@ -584,6 +584,7 @@ class APITester:
         self.test_auctions_endpoints()
         self.test_leagues_endpoints()
         self.test_users_endpoints()
+        self.test_authentication_endpoints()  # Added authentication tests
         self.test_error_handling()
         
         # Summary
