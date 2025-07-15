@@ -270,19 +270,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Splash Page Persistence Fix"
-    - "Enhanced Navigation Component"
-    - "Root Route Configuration"
+    - "Navigation Audit and Fixes"
+    - "Authentication Flow Integration"
+    - "Get Started Steps Navigation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
-    - agent: "testing"
-      message: "Comprehensive backend API testing completed successfully. All 14 test cases passed with 100% success rate. The Sports X Pro Cricket Auctions backend API is fully functional with proper Sports X branding, cricket auction functionality, seeded data, error handling, and all required endpoints working correctly. Backend is ready for frontend integration."
     - agent: "main"
-      message: "Successfully fixed splash page persistence issues and enhanced navigation. Removed localStorage logic causing splash to not appear on subsequent visits. Enhanced Sport X branding in navigation with larger, more prominent design. Verified splash page appears every time user visits root URL and persists until explicit user interaction. All navigation flows working correctly between splash and main app sections."
-    - agent: "testing"
-      message: "✅ VERIFICATION COMPLETE: Backend API verification after frontend navigation changes successful. All 14 backend tests passed with 100% success rate. Health check endpoints (GET /api/ and GET /api/health) working perfectly. Players endpoints (GET /api/players, GET /api/players/player-1, POST /api/players/player-1/bid) functioning correctly. All core endpoints (teams, auctions, leagues, users) responding properly with expected Sports X branding and cricket auction data. Backend remains fully functional and accessible via /api prefix routes."
-    - agent: "testing"
-      message: "🎉 COMPREHENSIVE FRONTEND TESTING COMPLETED: All splash page functionality and enhanced navigation verified successfully. ✅ Root URL access shows splash every time (no localStorage interference). ✅ Splash page persists without auto-redirect (6+ seconds tested). ✅ All content loads properly (slides, animations, branding). ✅ All action buttons work correctly (Create Account, Sign In, Continue as Guest → /home). ✅ Enhanced navigation with Sport X branding functional. ✅ Sport X brand link navigates back to splash. ✅ About Sport X button links to splash. ✅ Direct /splash access shows back button. ✅ Back button functionality works. ✅ Multiple root URL visits show splash each time. ✅ Cross-page navigation works seamlessly. ✅ Responsive design verified on mobile (390x844) and tablet (768x1024). ✅ Complete user journey successful. The Sport X Pro Cricket Auctions app splash page and navigation enhancements are working perfectly as specified in the requirements."
+      message: "Started comprehensive navigation audit for Sport X Pro Cricket Auctions. Identified key issues: 1) Splash page buttons don't integrate with authentication system properly. 2) HowItWorks 'Get Started' steps need proper navigation flow. 3) Need systematic button audit across all pages. Plan: Fix splash page auth integration first, then HowItWorks navigation, then comprehensive button audit."
