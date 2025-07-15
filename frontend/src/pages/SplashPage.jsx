@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight, Users, Trophy, Target, Zap, Shield, Heart, ArrowLeft, UserPlus, LogIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
+import LoginModal from '../components/auth/LoginModal';
+import RegisterModal from '../components/auth/RegisterModal';
 
 const SplashPage = () => {
   const navigate = useNavigate();
