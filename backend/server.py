@@ -9,8 +9,8 @@ import logging
 from seed_data import PLAYERS_DATA
 from pathlib import Path
 
-# Import auth routes - temporarily disabled due to FastAPI error
-# from routes import auth
+# Import auth routes
+from routes import auth
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
