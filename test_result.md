@@ -201,6 +201,18 @@ backend:
           agent: "testing"
           comment: "✅ Database seeding working perfectly. All expected cricket players (Virat Kohli, MS Dhoni, Jasprit Bumrah, Rohit Sharma) are present with proper stats, images, and auction data. Teams, auctions, leagues, and users are properly seeded."
 
+  - task: "Authentication Routes Integration"
+    implemented: true
+    working: false
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ Authentication routes causing FastAPI startup error: 'Invalid args for response field! AsyncIOMotorDatabase is not a valid Pydantic field type'. Error in auth.py line 55 where register endpoint uses AsyncIOMotorDatabase = None as default parameter. Temporarily disabled auth routes import in server.py to restore core API functionality. Main agent needs to fix the auth route parameter definition to use proper FastAPI dependency injection instead of default parameter."
+
 frontend:
   - task: "Splash Page Persistence Fix"
     implemented: true
