@@ -253,29 +253,22 @@ const Auctions = () => {
               </Card>
             ))
           ) : (
-            <Card className="shadow-lg">
-              <CardContent className="p-8 text-center">
-                <Clock className="mx-auto text-gray-400 mb-4" size={48} />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Auctions Found</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {searchTerm 
-                    ? `No auctions match "${searchTerm}"`
-                    : selectedFilter === 'all' 
-                      ? 'No auctions available right now' 
-                      : `No ${selectedFilter} auctions available`
-                  }
-                </p>
-                <Button 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedFilter('all');
-                  }}
-                  variant="outline"
-                >
-                  Clear Filters
-                </Button>
-              </CardContent>
-            </Card>
+            <EmptyState
+              icon={Clock}
+              title="No Auctions Found"
+              description={searchTerm 
+                ? `No auctions match "${searchTerm}". Try adjusting your search or clearing filters.`
+                : selectedFilter === 'all' 
+                  ? 'No auctions are available right now. Check back later for new opportunities!' 
+                  : `No ${selectedFilter} auctions are currently available.`
+              }
+              actionText="Clear Filters"
+              onAction={() => {
+                setSearchTerm('');
+                setSelectedFilter('all');
+              }}
+              className="py-12"
+            />
           )}
         </div>
 
