@@ -189,42 +189,40 @@ const Home = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="space-y-3">
-              {hotPlayers.map((player) => (
-                <div 
-                  key={player.id} 
-                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                  onClick={() => navigate('/auctions')}
-                >
-                  <img 
-                    src={player.image} 
-                    alt={player.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{player.name}</h4>
-                    <p className="text-sm text-gray-500">{player.team} • {player.role}</p>
+            {hotPlayers.length > 0 ? (
+              <div className="space-y-3">
+                {hotPlayers.map((player) => (
+                  <div 
+                    key={player.id} 
+                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
+                    onClick={() => navigate('/auctions')}
+                  >
+                    <img 
+                      src={player.image} 
+                      alt={player.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900">{player.name}</h4>
+                      <p className="text-sm text-gray-500">{player.team} • {player.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-green-600">{ApiService.formatCurrency(player.currentBid)}</p>
+                      <p className="text-xs text-gray-500">{player.bidders?.length || 0} bidders</p>
+                    </div>
+                    <ArrowRight size={16} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-green-600">{ApiService.formatCurrency(player.currentBid)}</p>
-                    <p className="text-xs text-gray-500">{player.bidders?.length || 0} bidders</p>
-                  </div>
-                  <ArrowRight size={16} className="text-gray-400" />
-                </div>
-              ))}
-            </div>
-            {hotPlayers.length === 0 && (
-              <div className="text-center py-8">
-                <Flame className="mx-auto text-gray-400 mb-3" size={48} />
-                <p className="text-gray-500">No hot players right now</p>
-                <Button 
-                  onClick={() => navigate('/auctions')}
-                  className="mt-2"
-                  size="sm"
-                >
-                  Browse All Players
-                </Button>
+                ))}
               </div>
+            ) : (
+              <EmptyState
+                icon={Flame}
+                title="No Hot Players Right Now"
+                description="Check back later to see trending players, or browse all available players to find your favorites."
+                actionText="Browse All Players"
+                onAction={() => navigate('/auctions')}
+                className="py-8"
+              />
             )}
           </CardContent>
         </Card>
