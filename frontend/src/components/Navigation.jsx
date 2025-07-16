@@ -133,18 +133,18 @@ const Navigation = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center space-y-1 transition-all duration-200 ${
+                className={`flex flex-col items-center justify-center space-y-1 transition-all duration-200 touch-manipulation ${
                   isActive 
                     ? `${item.color} scale-110` 
-                    : 'text-gray-500 hover:text-gray-700'
+                    : 'text-gray-500 hover:text-gray-700 active:scale-95'
                 }`}
               >
-                <Icon size={isActive ? 22 : 20} />
+                <Icon size={isActive ? 24 : 22} />
                 <span className={`text-xs font-medium ${isActive ? 'font-bold' : ''}`}>
                   {item.label}
                 </span>
                 {isActive && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-current rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-current rounded-full"></div>
                 )}
               </button>
             );
