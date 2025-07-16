@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Comprehensive navigation audit and fix for Sport X Pro Cricket Auctions app - ensure all 'Get Started' steps link through the app and all buttons take users to required destinations"
+user_problem_statement: "Implement most impactful visual and UX improvements quickly to prepare Sport X Pro Cricket Auctions app for user testing in 7 days"
 
 backend:
   - task: "Health Check Endpoints"
