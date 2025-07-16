@@ -4,6 +4,8 @@ import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy, Star, Arr
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import EmptyState from '../components/ui/EmptyState';
 import ApiService from '../services/api';
 
 const Home = () => {
