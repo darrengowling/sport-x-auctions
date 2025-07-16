@@ -231,7 +231,7 @@ const Home = () => {
         <div className="grid grid-cols-2 gap-4">
           <Button 
             onClick={() => navigate('/auctions')}
-            className="h-16 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg"
+            className="h-16 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
           >
             <div className="text-center">
               <Gavel className="mx-auto mb-1" size={20} />
@@ -242,7 +242,7 @@ const Home = () => {
           <Button 
             onClick={() => navigate('/leagues')}
             variant="outline"
-            className="h-16 border-2 border-blue-200 hover:bg-blue-50"
+            className="h-16 border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transform transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
           >
             <div className="text-center">
               <Trophy className="mx-auto mb-1 text-blue-500" size={20} />
