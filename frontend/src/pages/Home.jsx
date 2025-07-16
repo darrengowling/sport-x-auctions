@@ -271,39 +271,36 @@ const Home = () => {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
-              {upcomingAuctions.map((auction) => (
-                <div 
-                  key={auction.id} 
-                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
-                  onClick={() => navigate(`/auction/${auction.id}`)}
-                >
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{auction.name}</h4>
-                    <p className="text-sm text-gray-500">{auction.participants || 0} teams registered</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-blue-600">
-                      {new Date(auction.startTime).toLocaleDateString()}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(auction.startTime).toLocaleTimeString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              
-              {upcomingAuctions.length === 0 && (
-                <div className="text-center py-8">
-                  <Clock className="mx-auto text-gray-400 mb-3" size={48} />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Upcoming Auctions</h3>
-                  <p className="text-sm text-gray-600 mb-4">Check back later for new auction opportunities</p>
-                  <Button 
-                    onClick={() => navigate('/auctions')}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
+              {upcomingAuctions.length > 0 ? (
+                upcomingAuctions.map((auction) => (
+                  <div 
+                    key={auction.id} 
+                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors group"
+                    onClick={() => navigate(`/auction/${auction.id}`)}
                   >
-                    Browse Auctions
-                  </Button>
-                </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{auction.name}</h4>
+                      <p className="text-sm text-gray-500">{auction.participants || 0} teams registered</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-blue-600">
+                        {new Date(auction.startTime).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(auction.startTime).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <EmptyState
+                  icon={Clock}
+                  title="No Upcoming Auctions"
+                  description="All auctions are currently live or completed. Check back later for new auction opportunities."
+                  actionText="Browse All Auctions"
+                  onAction={() => navigate('/auctions')}
+                  className="py-8"
+                />
               )}
             </div>
           </CardContent>
