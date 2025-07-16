@@ -175,7 +175,7 @@ const HowItWorks = () => {
                         {/* Interactive Button */}
                         <button
                           onClick={step.action}
-                          className={`${step.color} hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 flex items-center space-x-2 mx-auto`}
+                          className={`${step.color} hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-2 mx-auto shadow-lg`}
                         >
                           <Play className="w-4 h-4" />
                           <span>{step.actionText}</span>
