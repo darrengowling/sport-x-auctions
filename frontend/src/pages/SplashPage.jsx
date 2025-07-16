@@ -210,7 +210,7 @@ const SplashPage = () => {
             {/* Primary Action - Create Account */}
             <Button 
               onClick={handleCreateAccount}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-2xl transform transition-all duration-200 hover:scale-105"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-2xl transform transition-all duration-200 hover:scale-105 active:scale-95"
             >
               <UserPlus size={18} className="mr-2" />
               <span>Create Account</span>
@@ -220,7 +220,7 @@ const SplashPage = () => {
             <Button 
               onClick={handleSignIn}
               variant="outline"
-              className="w-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold py-4 rounded-xl backdrop-blur-sm"
+              className="w-full border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 font-semibold py-4 rounded-xl backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
             >
               <LogIn size={18} className="mr-2" />
               <span>Sign In</span>
@@ -229,7 +229,7 @@ const SplashPage = () => {
             {/* Tertiary Action - Continue as Guest */}
             <button 
               onClick={handleEnterArena}
-              className="w-full text-blue-200 font-medium py-3 text-sm hover:text-white transition-colors"
+              className="w-full text-blue-200 hover:text-white font-medium py-3 text-sm transition-all duration-200 hover:scale-105"
             >
               Continue as Guest
             </button>
