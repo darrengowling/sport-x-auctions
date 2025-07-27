@@ -11,6 +11,7 @@ from pathlib import Path
 
 # Import auth routes
 from routes import auth
+from routes import auctions
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
