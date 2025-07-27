@@ -4,6 +4,7 @@ import { Trophy, Users, TrendingUp, Crown, Star, Medal, Flame, Clock, Hash } fro
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { COMMUNITY_FEATURES } from '../data/sports';
 import SPORT_X_THEME from '../constants/theme';
 import ApiService from '../services/api';
