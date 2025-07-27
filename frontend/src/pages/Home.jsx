@@ -100,44 +100,30 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pb-20 sm:pb-0">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 pb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Welcome back! 🏏</h1>
-            <p className="text-blue-100 opacity-90 text-lg mt-2">Ready to dominate the auctions?</p>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => navigate('/profile')}
-              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-            >
-              <Bell size={20} />
-              {notifications > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {notifications}
-                </span>
-              )}
-            </button>
-            
-            <div className="text-right">
-              <p className="text-sm font-medium">{currentTime.toLocaleTimeString()}</p>
-              <p className="text-xs text-blue-200">{currentTime.toLocaleDateString()}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* User Stats */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold mb-1">{user.name}</h2>
-              <p className="text-blue-100 text-sm">Your cricket empire awaits. No bets. No chance.</p>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold">{user.winRate}%</p>
-              <p className="text-blue-200 text-sm">Win Rate</p>
+      {/* Hero Section with Sport X Branding */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-slate-900 mb-8">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative px-6 py-12">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-5xl font-extrabold mb-3">
+              Welcome to <span className="text-white">Sport X</span>
+            </h1>
+            <p className="text-lg md:text-xl font-medium mb-6">
+              Own cricket legends. Build championship teams. Dominate the auction arena.
+            </p>
+            <div className="flex items-center justify-center space-x-6 text-sm font-semibold">
+              <div className="flex items-center space-x-2">
+                <Users className="w-5 h-5" />
+                <span>Live Community</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Trophy className="w-5 h-5" />
+                <span>Real Auctions</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5" />
+                <span>Live Stats</span>
+              </div>
             </div>
           </div>
         </div>
