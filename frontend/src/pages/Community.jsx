@@ -74,7 +74,7 @@ const Community = () => {
               value="activity"
               className="data-[state=active]:bg-yellow-500 data-[state=active]:text-slate-900 text-white font-medium"
             >
-              <Fire className="w-4 h-4 mr-2" />
+              <Flame className="w-4 h-4 mr-2" />
               Live Activity
             </TabsTrigger>
             <TabsTrigger 
