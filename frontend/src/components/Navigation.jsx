@@ -33,10 +33,10 @@ const Navigation = () => {
       color: 'text-orange-500'
     },
     { 
-      path: '/profile', 
-      icon: User, 
-      label: 'Profile',
-      color: 'text-red-500'
+      path: '/community', 
+      icon: MessageCircle, 
+      label: 'Community',
+      color: 'text-pink-500'
     }
   ];
 
