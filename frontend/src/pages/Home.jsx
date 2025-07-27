@@ -14,14 +14,58 @@ const Home = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(3);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [players, setPlayers] = useState([]);
-  const [auctions, setAuctions] = useState([]);
-  const [teams, setTeams] = useState([]);
+  // Enhanced cricket data integration
+  const [players, setPlayers] = useState(ENHANCED_CRICKET_PLAYERS);
+  const [auctions, setAuctions] = useState([
+    { 
+      id: 'ipl-2024', 
+      name: 'IPL 2024 Mega Auction', 
+      participants: 156, 
+      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      sport: 'cricket',
+      league: 'IPL',
+      status: 'upcoming'
+    },
+    { 
+      id: 'bbl-2024', 
+      name: 'BBL 2024 Draft', 
+      participants: 89, 
+      startTime: new Date(Date.now() + 4 * 60 * 60 * 1000),
+      sport: 'cricket',
+      league: 'BBL',
+      status: 'upcoming'
+    }
+  ]);
+  const [teams, setTeams] = useState([
+    {
+      id: 'team-1',
+      name: 'Mumbai Warriors',
+      performance: 89.2,
+      wins: 12,
+      losses: 3,
+      points: 24,
+      budget: 25000000,
+      budgetUsed: 75000000
+    },
+    {
+      id: 'team-2', 
+      name: 'Delhi Gladiators',
+      performance: 76.8,
+      wins: 9,
+      losses: 6,
+      points: 18,
+      budget: 35000000,
+      budgetUsed: 65000000
+    }
+  ]);
   const [user] = useState({
-    name: "Cricket Fan",
-    winRate: 42.8,
-    totalWins: 12,
-    totalMatches: 28
+    name: "Cricket Enthusiast",
+    winRate: 72.4,
+    totalWins: 18,
+    totalMatches: 25,
+    rank: 156,
+    totalBids: 47,
+    currentBudget: 45000000
   });
   const [loading, setLoading] = useState(true);
 
