@@ -92,6 +92,7 @@ function App() {
                 <Route path="/teams" element={<AppLayout><Teams /></AppLayout>} />
                 <Route path="/leagues" element={<AppLayout><Leagues /></AppLayout>} />
                 <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+                <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
               </Routes>
               <Toaster />
             </BrowserRouter>
