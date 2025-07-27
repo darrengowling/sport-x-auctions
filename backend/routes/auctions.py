@@ -8,7 +8,6 @@ import uuid
 from models.auction import AuctionRoom, PlayerAuction, AuctionEvent, BidAttempt, AuctionResult
 from models.user import User, Bid
 from services.websocket_manager import manager
-from services.database import get_database
 
 router = APIRouter(prefix="/auctions", tags=["auctions"])
 
