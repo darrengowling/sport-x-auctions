@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy, Star, ArrowRight } from 'lucide-react';
+import { Bell, Search, Flame, Clock, Users, TrendingUp, Gavel, Trophy, Star, ArrowRight, Crown, Hash } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import EmptyState from '../components/ui/EmptyState';
+import { ENHANCED_CRICKET_PLAYERS, COMMUNITY_FEATURES } from '../data/sports';
+import SPORT_X_THEME from '../constants/theme';
 import ApiService from '../services/api';
 
 const Home = () => {
