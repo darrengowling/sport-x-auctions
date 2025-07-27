@@ -151,6 +151,9 @@ app.include_router(api_router)
 # Include auth routes
 app.include_router(auth.router, prefix="/api")
 
+# Include auction routes
+app.include_router(auctions.router, prefix="/api")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
