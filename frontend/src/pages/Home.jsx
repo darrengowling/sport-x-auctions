@@ -77,26 +77,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [playersData, auctionsData, teamsData] = await Promise.all([
-          ApiService.getPlayers(),
-          ApiService.getAuctions(),
-          ApiService.getTeams()
-        ]);
-        
-        setPlayers(playersData);
-        setAuctions(auctionsData);
-        setTeams(teamsData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Simulate loading for enhanced data
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   const hotPlayers = players.filter(player => player.isHotPick).slice(0, 3);
