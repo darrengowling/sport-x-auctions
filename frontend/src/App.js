@@ -20,6 +20,7 @@ import AuctionRoom from "./pages/AuctionRoom";
 import Teams from "./pages/Teams";
 import Leagues from "./pages/Leagues";
 import Profile from "./pages/Profile";
+import Community from "./pages/Community";
 import { Toaster } from "./components/ui/toaster";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
