@@ -176,7 +176,7 @@ const Community = () => {
               <Card className="lg:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-white">
-                    <Fire className="w-6 h-6 text-red-500" />
+                    <Flame className="w-6 h-6 text-red-500" />
                     <span>Live Bidding Activity</span>
                   </CardTitle>
                   <p className="text-slate-400">Real-time auction action</p>
